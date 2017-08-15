@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Review of Data Cleaning</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Tyson S. Barrett" />
+    <link href="libs/remark-css/example.css" rel="stylesheet" />
+    <script src="libs/htmlwidgets/htmlwidgets.js"></script>
+    <script src="libs/jquery/jquery.min.js"></script>
+    <script src="libs/datatables-binding/datatables.js"></script>
+    <link href="libs/dt-core/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="libs/dt-core/css/jquery.dataTables.extra.css" rel="stylesheet" />
+    <script src="libs/dt-core/js/jquery.dataTables.min.js"></script>
+    <link href="libs/dt-ext-keytable/css/keyTable.dataTables.min.css" rel="stylesheet" />
+    <script src="libs/dt-ext-keytable/js/dataTables.keyTable.min.js"></script>
+    <link href="libs/dt-ext-responsive/css/responsive.dataTables.min.css" rel="stylesheet" />
+    <script src="libs/dt-ext-responsive/js/dataTables.responsive.min.js"></script>
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Review of Data Cleaning
+## 🤓
+### Tyson S. Barrett
+
+---
+
+
+
+class: center, middle, inverse
+
+# Review of Basic R Objects 
+# and Tidyverse
+
+---
+# Let's Get Started
+
+### Objects!!
+
+- What are R objects? 
+
+--
+
+- Why are they important?
+
+--
+
+- Can you name some object types?
+
+--
+    - vectors
+    - data frames
+    - lists
+    - functions
+    - operators
+--
+
+- How do you create an object (e.g., a vector)?
+
+--
+    - The assignment operator ( `&lt;-` or `=` ) and the `c()` function 😃
+      
+
+```r
+x &lt;- c(lots, of, cool, stuff)
+```
+
+---
+# R Objects
+
+### Vectors
+What type of vector does each produce?
+
+```r
+## Vectors
+x = c(9,4,5,2,6)
+y = c("male", "female", "female", "male", "female")
+z = factor(y)
+```
+
+--
+
+1. `x`: numeric
+
+--
+
+1. `y`: character
+
+--
+
+1. `z`: factor
+
+---
+# R Objects
+
+### Data Frames and Lists
+What is a `data.frame`? What about a `list`?
+
+--
+
+.pull-left[
+
+```r
+df = data.frame(
+  x = c(9,4,5,2,6),
+  y = c("male", "female", 
+        "female", "male", 
+        "female"),
+  z = factor(y)
+)
+```
+
+📜 A spreadsheet-like table and is the core data object that you will use.
+
+]
+
+.pull-right[
+
+```r
+l1 = list(
+  x = c(9,4,5,2,6),
+  y = c("male", "female", 
+        "female", "male", 
+        "female"),
+  z = factor(y)
+)
+```
+
+👝 It's much like a bag that you can put any object in (i.e., a flexible version of a `data.frame`).
+
+]
+
+Note: Data frames are a special list where all the elements are the same size.
+
+---
+# Importing Data
+
+Almost any type of data can be imported into R with little effort.
+
+--
+
+We will show:
+
+- CSV
+- tab delimited
+- space delimited
+- SPSS 
+- SAS export
+
+--
+
+Others are possible 😃
+
+---
+# Importing Data
+
+.pull-left[
+### Base R
+**CSV**
+
+```r
+df &lt;- read.csv("File.csv")
+```
+
+**Tab Delimited**
+
+```r
+df &lt;- read.table("File.txt", 
+                 header = TRUE,
+                 sep = "\t")
+```
+
+**Space Delimited**
+
+```r
+df &lt;- read.table("File.txt", 
+                 header = TRUE,
+                 sep = " ")
+```
+
+]
+
+.pull-right[
+### Others
+**CSV**
+
+```r
+library(readr)
+df &lt;- read_csv("File.csv")
+```
+
+**SPSS**
+
+```r
+library(haven)
+df &lt;- read_spss("File.sav")
+```
+
+**SAS**
+
+```r
+library(foreign)
+df &lt;- read.xport("File.xpt")
+```
+
+]
+
+---
+# R Objects
+
+### Functions 💪
+
+It's how we do stuff in R!
+
+--
+
+What are the pieces of a function (a named function)?
+
+--
+
+
+```r
+myfunction = function(arguments){
+  stuff = that(the, function, does)
+  stuff
+}
+```
+
+1. a name
+1. `function()`
+1. arguments
+1. stuff inside the `{}`
+1. a return value (usually)
+
+---
+# Functions 💪
+
+- How do you create your own function?
+
+--
+#### Write your own function that gives you the mean and range of each variable in a data frame.
+
+--
+#### Now update that function so it only takes the mean and range of numeric variables.
+
+--
+- One way:
+
+```r
+mean_range = function(df){
+  means = lapply(df, mean)
+  mins = lapply(df, min)
+  maxs = lapply(df, max)
+  final = data.frame("Mean" = unlist(means), 
+                     "Range" = unlist(maxs) - unlist(mins))
+  final
+}
+```
+
+---
+# Functions 💪
+
+```r
+mean_range = function(df){
+  means = lapply(df, mean)
+  mins = lapply(df, min)
+  maxs = lapply(df, max)
+  final = data.frame("Mean" = unlist(means), 
+                     "Range" = unlist(maxs) - unlist(mins))
+  final
+}
+```
+
+- What does each piece do?
+
+--
+    - `lapply()`
+--
+    - `unlist()`
+--
+    - `final`
+--
+- What does `mean_range()` return?
+--
+
+#### What is something you'd like R to do for you? (let's create a function for it)
+
+---
+class: center, middle, inverse
+
+# Questions about R Objects?
+
+--
+class: center, middle, inverse
+
+# Now onto Tidyverse
+
+---
+background-image: url("https://lsru.github.io/tv_course/img/01_tidyverse_data_science.png")
+background-position: 60% 50%
+background-size: 800px
+class: center, bottom
+
+---
+background-image: url("https://lsru.github.io/tv_course/img/01_tidyverse_data_science.png")
+background-position: 90% 65%
+background-size: 400px
+
+# Tidyverse 📦
+
+A group of packages that make working with data intuitive and clean.
+
+#### The steps of tidyverse:
+
+1. import
+1. tidy
+1. transform
+1. visualize
+1. model
+1. communicate
+
+--
+
+All these have the same overall goal: 
+
+- **to produce "tidy" data.**
+
+
+---
+background-image: url("https://tysonstanley.github.io/assets/images/dataframe_fig.jpg")
+background-position: 95% 50%
+background-size: 425px
+
+# Tidy Data
+
+.pull-left[
+Tidy data:
+
+1. column is a variable
+1. row is observation
+
+The tidy form depends on many features of the data set.
+
+E.g.
+
+- For longitudinal data, this is generally the long form.
+]
+
+---
+background-image: url("https://tysonstanley.github.io/assets/images/dataframe_fig.jpg")
+background-position: 95% 50%
+background-size: 425px
+
+# Tidy Data
+
+.pull-left[
+We often need to reshape the data to get it into this form:
+
+```r
+library(furniture)
+df_long = long(df,
+               c("var1", "var2"),
+               v.names = "var",
+               idvar = "id")
+```
+
+`long()` takes a wide form to long form (which is many cases is the "tidy" form)
+
+]
+
+---
+
+# Selecting, Filtering, Grouping, Summarizing
+
+.pull-left[
+
+**Base R**
+
+```r
+## Selecting
+d[, c("var1", "var2")]
+
+## Filtering
+d[d$var1 == 1, ]
+
+## Summarizing
+lapply(d, mean)
+
+## Summarizing by Groups
+tapply(d$var1, d$group, mean)
+```
+
+]
+
+.pull-right[
+
+**Tidyverse**
+
+```r
+## Selecting
+select(d, var1, var2)
+
+## Filtering
+filter(d, var1 == 1)
+
+## Summarizing
+map(d, mean)
+
+## Summarizing by Groups
+d %&gt;%
+  group_by(group) %&gt;%
+  summarize(mean(var1))
+```
+
+]
+
+---
+background-image: url("https://tysonstanley.github.io/assets/images/Joining.jpg")
+background-position: 50% 60%
+background-size: 600px
+
+# Join
+
+---
+# Join
+
+From the tidyverse, you can easily do each type of join.
+
+.pull-left[
+
+
+```r
+joined = d1 %&gt;%
+  inner_join(d2, by = "ID")
+```
+
+
+```r
+joined = d1 %&gt;%
+  left_join(d2, by = "ID")
+```
+
+]
+
+.pull-right[
+
+```r
+joined = d1 %&gt;%
+  full_join(d2, by = "ID")
+```
+
+
+```r
+joined = d1 %&gt;%
+  right_join(d2, by = "ID")
+```
+
+]
+
+Can do several in-a-row:
+
+
+```r
+joined = d1 %&gt;%
+  full_join(d2, by = "ID") %&gt;%
+  full_join(d3, by = "ID") %&gt;%
+  full_join(d4, by = "ID")
+```
+
+
+---
+class: center, middle, inverse
+
+# Long and Wide
+
+---
+background-image: url("https://tysonstanley.github.io/assets/images/LongWide_Handout.jpg")
+background-position: 50% 50%
+background-size: 900px
+
+---
+# Long
+
+Using the wide data below:
+
+```r
+df_wide = data.frame(
+  "ID" = 1:10,
+  "X1" = rnorm(10),
+  "X2" = rnorm(10),
+  "Y1" = runif(10),
+  "Y2" = runif(10)
+)
+```
+
+We are going to reshape this to long format.
+
+
+```r
+library(furniture)
+df_long = long(df_wide,
+               c("X1", "X2"),
+               c("Y1", "Y2"),
+               v.names = c("X", "Y"))
+```
+
+```
+## id = ID
+```
+
+---
+# Long
+
+<div id="htmlwidget-6f84403c2b93ad6e17db" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6f84403c2b93ad6e17db">{"x":{"filter":"none","extensions":["KeyTable","Responsive"],"fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10],[1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2],[0.1217,-0.439,0.8042,-0.1661,0.4463,-0.7307,0.229,1.1266,1.8668,-1.5487,-0.2493,0.255,-0.4846,-1.3166,1.1469,0.7692,1.5085,0.1591,0.8128,0.6797],[0.5385,0.1527,0.313,0.4858,0.2052,0.8848,0.008,0.852,0.9512,0.7041,0.2,0.8584,0.8646,0.5995,0.5594,0.7591,0.578,0.2939,0.0924,0.3455]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>ID<\/th>\n      <th>time<\/th>\n      <th>X<\/th>\n      <th>Y<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"dom":"Bfrtip","deferRender":true,"keys":true,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"responsive":true,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+
+---
+# Wide
+
+Using the `df_long` we just created, let's reshape it back to wide.
+
+
+```r
+df_wide = wide(df_long,
+               v.names = c("X", "Y"),
+               timevar = "time")
+```
+
+```
+## id = ID
+```
+
+<div id="htmlwidget-6767fced3a92a10d0f47" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6767fced3a92a10d0f47">{"x":{"filter":"none","extensions":["KeyTable","Responsive"],"fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10"],[1,2,3,4,5,6,7,8,9,10],[0.1217,0.8042,0.4463,0.229,1.8668,-0.2493,-0.4846,1.1469,1.5085,0.8128],[0.5385,0.313,0.2052,0.008,0.9512,0.2,0.8646,0.5594,0.578,0.0924],[-0.439,-0.1661,-0.7307,1.1266,-1.5487,0.255,-1.3166,0.7692,0.1591,0.6797],[0.1527,0.4858,0.8848,0.852,0.7041,0.8584,0.5995,0.7591,0.2939,0.3455]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>ID<\/th>\n      <th>X.1<\/th>\n      <th>Y.1<\/th>\n      <th>X.2<\/th>\n      <th>Y.2<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"dom":"Bfrtip","deferRender":true,"keys":true,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,5]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"responsive":true,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+
+---
+class: center, middle, inverse
+
+# End of Review of Data Manipulation
+
+### Hopefully much of this was familiar.
+### Next we will review tables and `ggplot2`
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {window.dispatchEvent(new Event('resize'));});</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+  }
+});
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -1,0 +1,76 @@
+---
+title: "Homework 1"
+author: "Put Your Name Here"
+output: html_document
+---
+
+# Load the libraries 
+Load the libraries you are going to use:
+```{r}
+
+```
+
+
+# Import 
+Import the `OfficeParks` data set:
+```{r}
+
+```
+
+
+# Assess the Data
+1. How many variables are there? 
+2. How many observations? 
+3. What format is the data in? 
+4. What functions did you use to find answers to these questions?
+```{r}
+
+```
+
+
+# Table 1
+Provide a quick summary of the data stratified by the `show` variable. What interesting thing(s) did you notice?
+```{r}
+
+```
+
+
+# Format of the Data
+Is the data in tidy format? If not, change it to a tidy (long) form.
+```{r}
+
+```
+
+
+# Missingness
+Are there missing values in the data? Which variables have missing values? Which individuals have missing values?
+```{r}
+
+```
+
+
+# Visualize
+Show me something interesting using `ggplot2`.
+```{r}
+
+```
+
+
+# Model
+Using information from your visualization, model the data. Provide the model output in a clean table.
+```{r}
+
+```
+
+
+# Interpret 
+Interpret the results you have obtained throughout this assignment.
+```{r}
+
+```
+
+
+# Learn More
+What is a topic or function that you want to learn more about?
+
+

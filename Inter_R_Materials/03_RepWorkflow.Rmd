@@ -1,0 +1,195 @@
+---
+title: "Reproducible Workflow with `rmarkdown`"
+subtitle: "😮"
+author: "Tyson S. Barrett"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+class: inverse
+
+# Outline
+
+--
+
+## What is "reproducibility"?
+
+--
+
+## How can `rmarkdown` help?
+
+--
+
+## Integrating `rmarkdown` into your workflow
+
+--
+
+## The Ins-and-Outs of `rmarkdown` 
+
+---
+
+# References
+
+Goodman, SN, Fanelli, D, Ioannidis, JPA. (2016). What does reproducibility really mean? Science Translational Medicine, 8(341), 1-6.
+
+
+---
+class: inverse, middle, center
+# Reproducibility
+---
+
+# Reproducibility
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+library(tidyverse)
+data.frame(
+  Reproducibility = c("Methods", "Results", "Inferential"),
+  Definition = c("Same data and same methods",
+                 "Independent data (same population) and same methods",
+                 "Same or independent data and same methods")
+) %>%
+  DT::datatable(options = list(dom = "t"),
+                rownames = FALSE)
+```
+
+--
+
+This class will focus on **Methods Reproducibility**.
+
+--
+
+"Methods reproducibility refers to the provision of enough detail about study procedures and data so the same procedures could, in theory or in actuality, be exactly repeated," (Goodman et al., 2016).
+
+
+---
+
+# Methods Reproducibility
+
+"Methods reproducibility refers to the provision of enough detail about study procedures and data so the same procedures could, in theory or in actuality, be exactly repeated," (Goodman et al., 2016).
+
+--
+
+Requires
+
+- A replicable workflow.
+- Avoidance of input/output errors.
+- Documentation, documentation, documentation.
+- Transparent reporting.
+- A single raw data set from which all analyses are done.
+- Code (in this class, `R` code!) that works with the raw data.
+- Others?
+
+
+---
+
+# Methods Reproducibility and rmarkdown
+
+- A replicable workflow.
+- Avoidance of input/output errors.
+- Documentation, documentation, documentation.
+- Transparent reporting.
+- A single raw data set from which all analyses are done.
+- Code (in this class, `R` code!) that works with the raw data.
+- Others?
+
+--
+
+### Each can be aided by `rmarkdown` and its associated packages.
+
+--
+
+### We will demonstrate most of these throughout this course, but especially while we discuss `rmarkdown`.
+
+---
+
+# Benefits of rmarkdown
+
+1. Input (code) and output (tables/figures) are intimately tied---NO MANUAL TABLES!
+
+1. Document type is flexible and easy to adjust.
+
+1. Updates to the analyses and output are straightfoward---no need to keep track of 50+ little things to change.
+
+--
+
+1. Provides quick reports that can be shared across many platforms (Word, Latex, PDF, HTML).
+
+1. Makes transparent reporting easier---the actual steps of analysis are right next to the write up about the actual steps.
+
+1. If we use version control (e.g. *Git*), the file system is much simpler.
+
+--
+
+1. It's cool.
+
+---
+class: inverse, middle, center
+# Integrating rmarkdown into your workflow
+
+---
+
+
+
+---
+class: inverse, middle, center
+
+# The Ins-and-Outs of rmarkdown
+
+
+---
+
+# YAML
+
+Is the top of the file and goes between two `---` as in:
+
+```
+---
+YAML stuff
+---
+```
+
+--
+
+Stands for: "**Y**ou **A**re **M**y **L**izard"
+
+---
+# YAML
+
+Is the top of the file and goes between two `---` as in:
+
+```
+---
+YAML stuff
+---
+```
+
+~~Stands for: "**Y**ou **A**re **M**y **L**izard"~~
+
+Nope, it actually stands for:
+
+### Yet Another Markup Language
+
+---
+# YAML
+
+It is where you tell `rmarkdown` about the document, including
+
+1. Its type (PDF, Word, HTML, etc.)
+1. Its Title, Author, ect.
+1. Output options
+
+We will go through each aspect.
+
+--
+
+### RStudio has a [great website](http://rmarkdown.rstudio.com/lesson-1.html) that we will use to understand rmarkdown better.
+

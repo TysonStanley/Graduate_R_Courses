@@ -1,0 +1,517 @@
+---
+title: "Reviewing Tables and `ggplot2`"
+subtitle: "😃"
+author: "Tyson S. Barrett"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+# Data
+
+For these slides, the activities, and examples we will use the "Office_Parks" data set. 
+
+- Contains ficticious data on both *The Office (U.S.)* and *Parks and Recreation* television shows
+- Longitudinal (two time points) and nested (within show)
+- Currently in wide format
+
+--
+
+Data can be downloaded from: [tysonstanley.github.io](https://tysonstanley.github.io/assets/Data/OfficeParks.csv)
+
+---
+class: center, middle, inverse
+
+# Review of Beautiful Tables
+# and 
+# `ggplot2` 📊
+
+---
+# Load the Data
+
+```{r, echo=FALSE}
+d <- read.csv("~/Dropbox/Teaching/R for the Social Sciences 2/Data/OfficeParks.csv")
+```
+
+```{r, eval=FALSE}
+d <- read.csv("OfficeParks.csv")
+```
+```{r, echo=FALSE, eval=require('DT')}
+DT::datatable(
+  d,
+  extensions = c('Buttons', 'KeyTable', 'Responsive', 'Scroller'),
+  fillContainer = FALSE, 
+  options = list(pageLength = 7,
+                 dom = 'Bfrtip',
+                 buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+                 deferRender = TRUE,
+                 scrollY = 200,
+                 scroller = TRUE,
+                 keys = TRUE)
+)
+```
+
+---
+# Explore the Data
+
+#### What are some ways to explore this data?
+
+--
+
+- data summaries via tables
+- univariate and multi-variate plots
+
+### Quick Summaries
+
+.pull-left[
+Among the important aspects of the data to explore include:
+
+- correlations
+- means and standard deviations
+- ranges
+- distributions
+- missingness
+]
+
+--
+
+.pull-right[
+For this we'll use a few functions:
+
+1. `furniture::tableC()`
+1. `furniture::table1()`
+1. `summary()`
+1. `psych::describe()`
+]
+
+---
+# Correlations
+
+```{r, message=FALSE}
+library(furniture)
+tableC(d,
+       prod1, ment1, depr1, awkw1,
+       na.rm=TRUE)
+```
+
+---
+# Descriptives
+
+#### Simple
+```{r}
+library(furniture)
+table1(d,
+       prod1, ment1, depr1, awkw1)
+```
+
+---
+# Descriptives
+
+#### Stratified
+```{r}
+library(furniture)
+table1(d,
+       prod1, ment1, depr1, awkw1,
+       splitby = ~show)
+```
+
+---
+# Descriptives
+
+#### Stratified with bivariate statistical tests (by show)
+```{r}
+library(furniture)
+table1(d,
+       prod1, ment1, depr1, awkw1,
+       splitby = ~show, test = TRUE)
+```
+
+---
+# Descriptives
+
+```{r, echo=FALSE}
+library(furniture)
+table1(d,
+       prod1, ment1, depr1, awkw1,
+       splitby = ~show, test = TRUE)
+```
+
+Any surprises? 
+
+--
+
+- `awkw1` seems massively different
+- Could be a problem with the data
+
+--
+
+We can see if there are weird things in the ranges and distributions
+
+---
+# Ranges and Distributions
+
+```{r, message=FALSE, warning=FALSE, eval=FALSE}
+library(tidyverse)   ## for the pipe and select()
+d %>%
+  select(awkw1, awkw2) %>%
+  psych::describeBy(group = d$show)
+```
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+library(tidyverse)   ## for the pipe and select()
+thing1 = d %>%
+  select(awkw1, awkw2) %>%
+  psych::describeBy(group = d$show)
+cat("Parks and Rec\n")
+cbind(round(thing1[["Parks and Rec"]][-c(11:13)],3), " " = "...")
+cat("------\nThe Office\n")
+cbind(round(thing1[["The Office"]][-c(11:13)],3), " " = "...")
+```
+
+All descriptives suggest there is a problem with the `awkw1` measures between the shows.
+
+
+---
+# Univariate and Multi-variate Plots
+
+We can only assess the data so much without plots. 
+
+Generally, there are two things we want to understand quickly:
+
+- distributions
+- relationships
+    - especially bi-variate or tri-variate relationships
+
+--
+### Some background on `ggplot2`
+
+Three major aspects:
+
+- **layers**: The layers include all the points, bars, lines, etc. The `geom_` functions. 
+- **scales**: The scales the scales of the x and y, the colors, the fills, etc. The `scale_` functions.
+- **facets**: The facets are the stratified plots. The `facet_` functions.
+
+Additionally, the general look of the plot can be controlled by the `theme` functions.
+
+---
+[![](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
+
+
+---
+# Univariate Plots
+### Simplest
+```{r, fig.height=4, fig.width=5}
+qplot(d$awkw1)
+```
+
+---
+# Univariate Plots
+### Better
+```{r, fig.height=4, fig.width=5}
+ggplot(d, aes(x=awkw1)) +
+  geom_density(alpha = .5, 
+               fill = "dodgerblue4", 
+               color = "dodgerblue4")
+```
+
+---
+# Univariate-ish Plots
+### Even Better
+```{r, fig.height=4, fig.width=6}
+ggplot(d, aes(x=awkw1, group = show, fill = show, color = show)) +
+  geom_density(alpha = .5)
+```
+
+---
+# Univariate-ish Plots
+### Maybe Best?
+```{r, fig.height=4, fig.width=6}
+ggplot(d, aes(x=awkw1, group = show, fill = show, color = show)) +
+  geom_density(alpha = .5) +
+  theme_classic()
+```
+
+---
+# Some Notes, Comments, and Questions
+
+--
+- The warning: there are some missing values!
+--
+
+- Again, `awkw1` looks iffy.
+--
+
+- What else would you like to do to the plot?
+--
+
+- Would you want to try a different type of plot?
+
+---
+# Multi-variate Plots
+
+Let's check some relationships using
+
+- scatterplots
+
+- scatterplots with groups
+
+- joy plots
+
+- bar plots
+
+- line plots
+
+We'll use the `group`, `color` and `fill` options as well as the `facet_` functions.
+
+--
+
+Let's get a blank plot started for each scatterplot and make `gend` a factor.
+```{r}
+d$gend = factor(d$gend, labels = c("Male", "Female"))
+scatter <- ggplot(d, aes(x = awkw1, y = prod1))
+```
+
+---
+# Scatterplot
+```{r, fig.height=4, fig.width=6}
+scatter + geom_jitter()
+```
+
+---
+# Scatterplot
+```{r, fig.height=4, fig.width=6, message=FALSE}
+scatter + geom_jitter() +
+  geom_smooth(method = "lm")
+```
+
+---
+# Scatterplot with Interaction
+Let's see if there appear to be differences across the genders. 
+
+```{r, fig.height=4, fig.width=6, message=FALSE, warning=FALSE}
+scatter + 
+  geom_jitter(aes(group = gend, color = gend)) +
+  geom_smooth(aes(group = gend, color = gend),
+              method = "lm", se = FALSE)
+```
+
+---
+# Joy Plots
+
+To create a joy plot, we need to reshape our data a bit. We are going to do two steps of reshaping: 
+
+1. Put our data in long form based on the time periods, and
+1. Turn each variable into a single variable for the joy plot.
+
+--
+```{r}
+df_long = long(d,
+               c("prod1", "prod2"),
+               c("ment1", "ment2"),
+               c("depr1", "depr2"),
+               c("awkw1", "awkw2"),
+               v.names = c("Prod", "Ment", "Depr", "Awkw"),
+               timevar = "Time") %>%
+  long(c("Prod", "Ment", "Depr", "Awkw"),
+       v.names = "Value",
+       timevar = "Variable",
+       times = c("Prod", "Ment", "Depr", "Awkw"),
+       id = c("id", "Time"))
+```
+
+---
+# `df_long`
+
+What do you expect to see in `df_long`? Go step by step through the functions.
+
+--
+
+```{r, echo=FALSE}
+datatable(
+  df_long[,-1],
+  extensions = c('Buttons', 'KeyTable', 'Responsive'),
+  fillContainer = FALSE, 
+  options = list(pageLength = 6,
+                 dom = 'Bfrtip',
+                 buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+                 deferRender = TRUE,
+                 keys = TRUE)
+  )
+```
+
+---
+# Joy Plots
+```{r, fig.height=4, fig.width=6, message=FALSE}
+library(ggjoy)
+ggplot(df_long, aes(x = Value, y = Variable)) +
+  geom_joy(alpha = .7)
+```
+
+--
+
+This highlights the overall distributions but ignores time points.
+---
+# Joy Plots
+```{r, fig.height=4, fig.width=6.5, message=FALSE}
+ggplot(df_long, aes(x = Value, y = Variable)) +
+  geom_joy(aes(fill = factor(Time),
+               color = factor(Time)),
+           alpha = .7)
+```
+
+--
+
+This, however, ignores the differences by show.
+
+---
+# Joy Plots
+```{r, fig.height=4, fig.width=8, message=FALSE}
+ggplot(df_long, aes(x = Value, y = Variable)) +
+  geom_joy(aes(fill = factor(Time),
+               color = factor(Time)),
+           alpha = .7) +
+  facet_grid(~show, scales = "free")
+```
+
+--
+
+What patterns do you see?
+
+---
+# Bar Plots
+
+In general, to do bar plots, we want some summary statistics (e.g., means and standard errors).
+
+```{r}
+summed = df_long %>%
+  group_by(Time, Variable, show) %>%
+  summarize(mean1 = mean(Value, na.rm=TRUE),
+            se1   = sd(Value, na.rm=TRUE)/sqrt(n()))
+```
+
+---
+# Bar Plots
+
+```{r, fig.height=4, fig.width=8, message=FALSE}
+ggplot(summed, aes(x = Variable, y = mean1)) +
+  geom_bar(stat = "identity", position = "dodge",
+           aes(fill = factor(Time),
+               color = factor(Time)),
+           alpha = .9) +
+  facet_grid(~show, scales = "free")
+```
+
+--
+
+This is probably a bit much... Let's try a line plot instead.
+
+---
+# Line Plots
+
+We are going to look at two types
+
+1. Pre-Post Plots
+1. Spaghetti plots
+
+---
+# Pre-Post Plots
+
+```{r, fig.height=4, fig.width=8, message=FALSE}
+ggplot(summed, aes(x = factor(Time), y = mean1,
+                   group = factor(Variable), color = factor(Variable))) +
+  geom_line(alpha = .9) +
+  geom_point() +
+  facet_grid(~show, scales = "free")
+```
+
+--
+
+Much better! We can see trends for each variable across both time points really easily.
+
+---
+# Spaghetti Plot
+We may want to see individual trajectories. Spaghetti plots are made for this.
+
+```{r, fig.height=4, fig.width=8, message=FALSE, warning=FALSE}
+ggplot(df_long, aes(x = factor(Time), y = Value,
+                   group = interaction(Variable, nam), color = factor(Variable))) +
+  geom_line(alpha = .7) +
+  geom_point(alpha = .7) +
+  facet_grid(Variable~show, scales = "free")
+```
+
+---
+# Spaghetti Plot
+I want to highlight a piece of the code before.
+
+```{r, eval=FALSE, message=FALSE, warning=FALSE}
+ggplot(df_long, aes(x = factor(Time), y = Value,
+                    group = interaction(Variable, nam) , color = factor(Variable))) +
+  geom_line(alpha = .7) +
+  geom_point(alpha = .7) +
+  facet_grid(Variable~show, scales = "free")
+```
+
+Note the:
+
+- `interaction(Variable, nam)`
+- `Variable~show` in the `facet_grid()` function
+
+--
+
+`interaction()` let's us group by more than one variable. Why would we want to do that here?
+
+`Variable~show` facets the plots by both variables where one is the rows (`Variable`) and one is the columns (`show`). We could have them both be the rows (`Variable+show~.`) or both be the columns (`~Variable+show`).
+
+---
+# Use it 💪
+
+### Using the "OfficeParks" data set:
+
+- **Understand time trends**
+- **Find out if `awkw2` has the same problem as `awkw1`**
+- **Find a way to fix `awkw1` (and `awkw2` if necessary)**
+- **Demonstrate where there is a strong bivariate relationship (using a plot)**
+
+--
+
+### What did you find??
+
+
+
+
+
+
+
+
+```{r, echo=FALSE, eval=FALSE}
+library(furniture)
+library(tidyverse)
+library(DT)
+table1(d,
+       prod1, ment1, depr1, awkw1,
+       splitby = ~show, test = TRUE,
+       type = "condense",
+       var_names = c("Productivity", "Mental Apt",
+                     "Depression", "Awkwardness")) %>%
+  data.frame %>%
+  setNames(c(" ", "Parks and Rec", "The Office", "P Value", "Split")) %>%
+  select(-Split) %>%
+  datatable(  
+    extensions = c('Buttons', 'KeyTable', 'Responsive', 'Scroller'),
+    fillContainer = FALSE, 
+    options = list(pageLength = 5,
+                   dom = 'Bt',
+                   buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+                   deferRender = TRUE,
+                   keys = TRUE)
+  )
+```

@@ -1,0 +1,75 @@
+---
+title: "Using Git and GitHub"
+subtitle: "💪"
+author: "Tyson S. Barrett"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+class: inverse
+
+# Outline
+
+--
+
+## What is Git?
+
+--
+
+## What is GitHub?
+
+--
+
+## Why Use 'em??
+
+--
+
+## Getting Started
+
+---
+
+# References
+
+
+
+
+---
+class: inverse, middle, center
+# Git
+---
+
+# Git
+
+
+
+---
+class: inverse, middle, center
+# GitHub
+
+---
+
+
+
+---
+class: inverse, middle, center
+
+# Why Use 'em??
+
+---
+
+
+---
+class: inverse, middle, center
+
+# Getting Started
+
+

@@ -1,0 +1,520 @@
+---
+title: "Review of Data Cleaning"
+subtitle: "🤓"
+author: "Tyson S. Barrett"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+class: center, middle, inverse
+
+# Review of Basic R Objects 
+# and Tidyverse
+
+---
+# Let's Get Started
+
+### Objects!!
+
+- What are R objects? 
+
+--
+
+- Why are they important?
+
+--
+
+- Can you name some object types?
+
+--
+    - vectors
+    - data frames
+    - lists
+    - functions
+    - operators
+--
+
+- How do you create an object (e.g., a vector)?
+
+--
+    - The assignment operator ( `<-` or `=` ) and the `c()` function 😃
+      
+```{r, eval=FALSE}
+x <- c(lots, of, cool, stuff)
+```
+
+---
+# R Objects
+
+### Vectors
+What type of vector does each produce?
+```{r}
+## Vectors
+x = c(9,4,5,2,6)
+y = c("male", "female", "female", "male", "female")
+z = factor(y)
+```
+
+--
+
+1. `x`: `r class(x)`
+
+--
+
+1. `y`: `r class(y)`
+
+--
+
+1. `z`: `r class(z)`
+
+---
+# R Objects
+
+### Data Frames and Lists
+What is a `data.frame`? What about a `list`?
+
+--
+
+.pull-left[
+```{r}
+df = data.frame(
+  x = c(9,4,5,2,6),
+  y = c("male", "female", 
+        "female", "male", 
+        "female"),
+  z = factor(y)
+)
+```
+
+📜 A spreadsheet-like table and is the core data object that you will use.
+
+]
+
+.pull-right[
+```{r}
+l1 = list(
+  x = c(9,4,5,2,6),
+  y = c("male", "female", 
+        "female", "male", 
+        "female"),
+  z = factor(y)
+)
+```
+
+👝 It's much like a bag that you can put any object in (i.e., a flexible version of a `data.frame`).
+
+]
+
+Note: Data frames are a special list where all the elements are the same size.
+
+---
+# Importing Data
+
+Almost any type of data can be imported into R with little effort.
+
+--
+
+We will show:
+
+- CSV
+- tab delimited
+- space delimited
+- SPSS 
+- SAS export
+
+--
+
+Others are possible 😃
+
+---
+# Importing Data
+
+.pull-left[
+### Base R
+**CSV**
+```{r, eval=FALSE}
+df <- read.csv("File.csv")
+```
+
+**Tab Delimited**
+```{r, eval=FALSE}
+df <- read.table("File.txt", 
+                 header = TRUE,
+                 sep = "\t")
+```
+
+**Space Delimited**
+```{r, eval=FALSE}
+df <- read.table("File.txt", 
+                 header = TRUE,
+                 sep = " ")
+```
+
+]
+
+.pull-right[
+### Others
+**CSV**
+```{r, eval=FALSE}
+library(readr)
+df <- read_csv("File.csv")
+```
+
+**SPSS**
+```{r, eval=FALSE}
+library(haven)
+df <- read_spss("File.sav")
+```
+
+**SAS**
+```{r, eval=FALSE}
+library(foreign)
+df <- read.xport("File.xpt")
+```
+
+]
+
+---
+# R Objects
+
+### Functions 💪
+
+It's how we do stuff in R!
+
+--
+
+What are the pieces of a function (a named function)?
+
+--
+
+```{r, eval=FALSE}
+myfunction = function(arguments){
+  stuff = that(the, function, does)
+  stuff
+}
+```
+
+1. a name
+1. `function()`
+1. arguments
+1. stuff inside the `{}`
+1. a return value (usually)
+
+---
+# Functions 💪
+
+- How do you create your own function?
+
+--
+#### Write your own function that gives you the mean and range of each variable in a data frame.
+
+--
+#### Now update that function so it only takes the mean and range of numeric variables.
+
+--
+- One way:
+```{r}
+mean_range = function(df){
+  means = lapply(df, mean)
+  mins = lapply(df, min)
+  maxs = lapply(df, max)
+  final = data.frame("Mean" = unlist(means), 
+                     "Range" = unlist(maxs) - unlist(mins))
+  final
+}
+```
+
+---
+# Functions 💪
+```{r}
+mean_range = function(df){
+  means = lapply(df, mean)
+  mins = lapply(df, min)
+  maxs = lapply(df, max)
+  final = data.frame("Mean" = unlist(means), 
+                     "Range" = unlist(maxs) - unlist(mins))
+  final
+}
+```
+
+- What does each piece do?
+
+--
+    - `lapply()`
+--
+    - `unlist()`
+--
+    - `final`
+--
+- What does `mean_range()` return?
+--
+
+#### What is something you'd like R to do for you? (let's create a function for it)
+
+---
+class: center, middle, inverse
+
+# Questions about R Objects?
+
+--
+class: center, middle, inverse
+
+# Now onto Tidyverse
+
+---
+background-image: url("https://lsru.github.io/tv_course/img/01_tidyverse_data_science.png")
+background-position: 60% 50%
+background-size: 800px
+class: center, bottom
+
+---
+background-image: url("https://lsru.github.io/tv_course/img/01_tidyverse_data_science.png")
+background-position: 90% 65%
+background-size: 400px
+
+# Tidyverse 📦
+
+A group of packages that make working with data intuitive and clean.
+
+#### The steps of tidyverse:
+
+1. import
+1. tidy
+1. transform
+1. visualize
+1. model
+1. communicate
+
+--
+
+All these have the same overall goal: 
+
+- **to produce "tidy" data.**
+
+
+---
+background-image: url("https://tysonstanley.github.io/assets/images/dataframe_fig.jpg")
+background-position: 95% 50%
+background-size: 425px
+
+# Tidy Data
+
+.pull-left[
+Tidy data:
+
+1. column is a variable
+1. row is observation
+
+The tidy form depends on many features of the data set.
+
+E.g.
+
+- For longitudinal data, this is generally the long form.
+]
+
+---
+background-image: url("https://tysonstanley.github.io/assets/images/dataframe_fig.jpg")
+background-position: 95% 50%
+background-size: 425px
+
+# Tidy Data
+
+.pull-left[
+We often need to reshape the data to get it into this form:
+```{r, eval=FALSE}
+library(furniture)
+df_long = long(df,
+               c("var1", "var2"),
+               v.names = "var",
+               idvar = "id")
+```
+
+`long()` takes a wide form to long form (which is many cases is the "tidy" form)
+
+]
+
+---
+
+# Selecting, Filtering, Grouping, Summarizing
+
+.pull-left[
+
+**Base R**
+```{r, eval=FALSE}
+## Selecting
+d[, c("var1", "var2")]
+
+## Filtering
+d[d$var1 == 1, ]
+
+## Summarizing
+lapply(d, mean)
+
+## Summarizing by Groups
+tapply(d$var1, d$group, mean)
+```
+
+]
+
+.pull-right[
+
+**Tidyverse**
+```{r, eval=FALSE}
+## Selecting
+select(d, var1, var2)
+
+## Filtering
+filter(d, var1 == 1)
+
+## Summarizing
+map(d, mean)
+
+## Summarizing by Groups
+d %>%
+  group_by(group) %>%
+  summarize(mean(var1))
+```
+
+]
+
+---
+background-image: url("https://tysonstanley.github.io/assets/images/Joining.jpg")
+background-position: 50% 60%
+background-size: 600px
+
+# Join
+
+---
+# Join
+
+From the tidyverse, you can easily do each type of join.
+
+.pull-left[
+
+```{r, eval=FALSE}
+joined = d1 %>%
+  inner_join(d2, by = "ID")
+```
+
+```{r, eval=FALSE}
+joined = d1 %>%
+  left_join(d2, by = "ID")
+```
+
+]
+
+.pull-right[
+```{r, eval=FALSE}
+joined = d1 %>%
+  full_join(d2, by = "ID")
+```
+
+```{r, eval=FALSE}
+joined = d1 %>%
+  right_join(d2, by = "ID")
+```
+
+]
+
+Can do several in-a-row:
+
+```{r, eval=FALSE}
+joined = d1 %>%
+  full_join(d2, by = "ID") %>%
+  full_join(d3, by = "ID") %>%
+  full_join(d4, by = "ID")
+```
+
+
+---
+class: center, middle, inverse
+
+# Long and Wide
+
+---
+background-image: url("https://tysonstanley.github.io/assets/images/LongWide_Handout.jpg")
+background-position: 50% 50%
+background-size: 900px
+
+---
+# Long
+
+Using the wide data below:
+```{r}
+df_wide = data.frame(
+  "ID" = 1:10,
+  "X1" = rnorm(10),
+  "X2" = rnorm(10),
+  "Y1" = runif(10),
+  "Y2" = runif(10)
+)
+```
+
+We are going to reshape this to long format.
+
+```{r, eval=require('furniture')}
+library(furniture)
+df_long = long(df_wide,
+               c("X1", "X2"),
+               c("Y1", "Y2"),
+               v.names = c("X", "Y"))
+```
+
+---
+# Long
+
+```{r, echo=FALSE, tidy=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(DT)
+datatable(
+  df_long %>% arrange(ID, time) %>% round(., 4),
+  extensions = c('KeyTable', 'Responsive'),
+  fillContainer = FALSE, 
+  options = list(pageLength = 5,
+                 dom = 'Bfrtip',
+                 deferRender = TRUE,
+                 keys = TRUE)
+)
+```
+
+---
+# Wide
+
+Using the `df_long` we just created, let's reshape it back to wide.
+
+```{r, eval=require('furniture')}
+df_wide = wide(df_long,
+               v.names = c("X", "Y"),
+               timevar = "time")
+```
+
+```{r, echo=FALSE, tidy=FALSE, message=FALSE, warning=FALSE}
+datatable(
+  df_wide %>% arrange(ID) %>% round(., 4),
+  extensions = c('KeyTable', 'Responsive'),
+  fillContainer = FALSE, 
+  options = list(pageLength = 5,
+                 dom = 'Bfrtip',
+                 deferRender = TRUE,
+                 keys = TRUE)
+)
+```
+
+---
+class: center, middle, inverse
+
+# End of Review of Data Manipulation
+
+### Hopefully much of this was familiar.
+### Next we will review tables and `ggplot2`
+
+
+
