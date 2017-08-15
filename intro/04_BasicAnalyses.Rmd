@@ -1,0 +1,447 @@
+---
+title: "Chapter 4: Basic Analyses"
+author: "Tyson S. Barrett"
+date: "Summer 2017"
+institute: "Utah State University"
+fontsize: 10pt
+output:
+  beamer_presentation:
+    theme: "metropolis"
+    toc: true
+    fig_width: 4.5
+    fig_height: 3.5
+    fig_caption: true
+    df_print: default
+    keep_tex: true
+    incremental: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment="")
+```
+
+# Introduction
+
+## Basic Analyses
+
+\center
+\textbf{Basic Analyses}: The analyses taught in the first stats course
+\vspace{12pt}
+
+\columnsbegin
+\begin{column}{0.48\textwidth}
+   These include:
+   \begin{enumerate}
+   \item T-tests
+   \item ANOVA
+   \item Linear Regression
+   \end{enumerate}
+   These allow us to assess relationships like that in the figure.
+\end{column}
+\begin{column}{0.48\textwidth}
+    \begin{center}
+     \includegraphics[width=\textwidth]{Figures/FigureInteraction.jpg}
+     \end{center}
+\end{column}
+\columnsend
+
+\vspace{12pt}
+Maybe surprising:\\ These all are doing essentially the same thing!
+
+First, \textbf{T-TESTS!}
+
+# T-tests
+
+## Three Types
+
+\Huge
+\begin{enumerate}
+\item Simple
+\item Independent Samples
+\item Paired Samples
+\end{enumerate}
+
+## Three Types
+
+\Large
+Each will be demonstrated using:
+
+\normalsize
+```{r}
+df <- data.frame("A"=sample(c(0,1), 100, replace = TRUE),
+                 "B"=rnorm(100),
+                 "C"=rnorm(100))
+df
+```
+
+## Simple
+
+\center
+Comparing a mean of a variable with $\mu$.
+```{r}
+t.test(df$B, mu = 0)
+```
+
+## Independent Samples
+
+\center
+Comparing the means of two groups (`dfA` is the grouping variable).
+```{r}
+t.test(df$B ~ df$A)
+```
+
+
+## Paired Samples
+
+\center
+Comparing repeated measures (e.g., Pretest vs. Posttest).
+```{r}
+t.test(df$B, df$C, paired = TRUE)
+```
+
+## Testing Assumptions of T-Tests
+
+T-tests require that the data be normally distributed with approximately the same variance. 
+```{r, fig.width=5, height=2}
+## Normality
+par(mfrow = c(1,2))
+hist(df$B)
+qqnorm(df$B)
+abline(a=0, b=1)
+
+## Variance
+var(df$B)
+var(df$C)
+```
+
+# ANOVA
+
+## Analysis of Variance
+
+The Analysis of Variance (ANOVA) is highly related to t-tests but can handle 2+ groups.
+
+1. Provides the same p-value as t-tests
+2. $t^2$ = $F$
+
+For example:
+```{r}
+fit_ano = aov(df$B ~ df$A)
+summary(fit_ano)
+t.test(df$B ~ df$A)$p.value
+```
+
+## Analysis of Variance
+
+```{r, eval=FALSE}
+fit_ano = aov(df$B ~ df$A)
+summary(fit_ano)
+t.test(df$B ~ df$A)$p.value
+```
+
+Notice in the code:
+
+- We assigned the `aov()` the name `fit_ano` (which we could have called anything)
+- We used the `summary()` function to see the F and p values.
+- We pulled the p-value right out of the `t.test()` function.
+
+
+## Types
+
+\huge
+\begin{enumerate}
+\item One-Way
+\item Two-Way (Factorial)
+\item Repeated Measures
+\item A combination of Factorial and Repeated Measures
+\end{enumerate}
+
+## Types
+
+We will use the following data set for the examples:
+```{r, message=FALSE}
+library(tidyverse)
+df <- data.frame("A"=sample(c(0,1), 100, replace = TRUE) %>% factor,
+                 "B"=rnorm(100),
+                 "C"=rnorm(100),
+                 "D"=sample(c(1:4), 100, replace = TRUE) %>% factor)
+df
+```
+
+## One-Way
+
+A One-Way ANOVA can be run using `aov()`.
+```{r}
+fit1 = aov(B ~ D, data = df)
+summary(fit1)
+```
+
+
+## Two-Way
+
+A Two-Way ANOVA uses essentially the exact same code with a minor change---including the other variable in an interaction.
+
+```{r}
+fit2 = aov(B ~ D * A, data = df)
+summary(fit2)
+```
+
+The `D:A` line highlights the interaction term whereas the others show the main effects.
+
+## Repeated Measures
+
+\center
+To show this, we will add a fake `ID` variable to our already fake data set `df`.
+
+```{r}
+df$ID = 1:100
+```
+
+And change our data to long (Can you remember how to do it?)
+```{r, message=FALSE}
+library(tidyverse)
+df_long = gather(df, "var", "value", 2:3)
+df_long
+```
+
+
+## Repeated Measures
+
+\Large
+The repeated measures, besides using a long-form of the data, is very similar in code. In addition to our usual formula (e.g., `something ~ other + stuff`), we have the `Error()` function. This function tells `R` how the repeated measures are clustered. In general, you'll provide the subject ID.
+
+The next slide highlights this.
+
+
+## Repeated Measures
+\small
+```{r}
+fit3 = aov(value ~ var + Error(ID), data = df_long)
+summary(fit3)
+```
+
+\normalsize
+Here, `value` was the value of the repeated measures where `var` is the time. That means our oucome is testing if there were any differences from pre-test to post-test across all the groups.
+
+
+## Combination
+
+To take the repeated measures a step further, we can do a Three-Way Repeated Measures ANOVA.
+
+```{r, eval=F}
+fit4 = aov(value ~ var * D * A + Error(ID), data = df_long)
+summary(fit4)
+```
+
+\center
+\small
+The output is on the next slide...
+
+
+## Combination
+\small
+```{r, echo=FALSE}
+fit4 = aov(value ~ var * D * A + Error(ID), data = df_long)
+summary(fit4)
+```
+
+
+## Checking Assumptions
+
+\center
+Of course, as with any statistical analysis, there are assumptions. 
+
+Many of these we can test.
+
+Using our `fitX` objects from our ANOVAs above, we can look at our assumptions:
+
+```{r, eval=FALSE}
+par(mfrow = c(2,2))  ## puts the four plots on a 2 x 2 grid
+plot(fit2)
+```
+
+\center
+\small
+Again, the output is on the next slide...
+
+## Checking Assumptions
+
+```{r, echo=FALSE}
+par(mfrow = c(2,2))
+plot(fit2)
+```
+
+## Checking Assumptions
+They don't fit great on the slides but trust me that normality looks good. The assumption of homogeneity of variance looks good as well.
+
+But, if you wanted to test it, you could.
+
+```{r, message=FALSE}
+library(car)
+leveneTest(fit2)
+```
+
+Large p-value here is a good thing: `emo::ji("smile")` \footnote{This shows a smiley in `R`, just not on these slides---from the `emo` package on GitHub.}
+
+
+# Linear Regression
+
+## Linear Regression
+\large
+Once again, linear regression is essentially the more flexible twin of ANOVA and t-tests.\footnote{It mainly only differs from ANOVA in the way it takes a dummy code rather than an effect code of the categorical variables.}
+
+It can:
+
+1. Handle continuous and categorical predictors (i.e., independent variables)
+2. Less stringent assumption of equality of variances
+3. Is what many other methods are built on (Chapter 5 and 6 will talk about some of these)
+
+
+
+## Linear Regression
+
+We will use `lm()` (Linear Model) to fit these models.
+
+\small
+```{r}
+fit5 = lm(B ~ A, data = df)
+summary(fit5)
+```
+
+## Linear Regression
+
+We can add an interaction with the `*`.
+\small
+```{r}
+fit6 = lm(B ~ A*D, data = df)
+summary(fit6)
+```
+
+
+## Other Specifications
+
+We can also make adjustments to the variables within the model. 
+
+First, we can transform the variables (e.g., log transformation).
+```{r, message=FALSE, eval=FALSE}
+fit7 = lm(log(B) ~ A*D, data = df)
+summary(fit7)
+```
+
+We can change the reference level of a variable, too.
+```{r, message=FALSE, eval=FALSE}
+fit8 = lm(B ~ relevel(D,ref = "4"), data = df)
+summary(fit8)
+```
+
+
+## Checking Assumptions
+
+Assumption checking is similar to that of the linear model.
+```{r}
+par(mfrow = c(2,2))
+plot(fit5)
+```
+
+
+# Reporting Results
+## Making This into a Table
+
+\Large
+Often we want to present this information in a table. This can be done is several ways:
+
+1. Pulling information out of the model objects directly
+2. Using a package like `stargazer` to do that work for you
+3. Manually by hand
+
+We can certainly do number 3 but why? So we'll look at both 1 and 2.
+
+## Pull information out of the model objects
+
+The model objects contain loads of information that we can pull out:
+
+1. Coefficients
+2. Standard Errors and P-values
+3. Confidence Intervals
+4. Fit Statistics
+5. Predicted Values
+6. and more! [^kidding]
+
+[^kidding]: For a low cost of $49.99! Kidding...
+
+
+## Pull information out of the model objects
+
+To see what the model object holds:
+\small
+```{r}
+names(fit5)
+names(summary(fit5))
+```
+
+## Pull information out of the model objects
+
+\center
+Using that information we can grab:
+```{r}
+summary(fit5)$coefficients
+```
+or
+```{r}
+summary(fit5)$fstatistic
+```
+
+## Pull information out of the model objects
+
+Put it in a table:
+```{r}
+rbind(data.frame(summary(fit5)$coefficients, "Type"="Simple Regression"),
+      data.frame(summary(fit6)$coefficients, "Type"="Interaction"))
+```
+
+## Pull information out of the model objects
+
+\Large
+On the previous slide we:
+
+1. Created two `data.frame` with the coefficients and a variable called `"Type"`
+2. Glued them together by row with `rbind()`
+
+This is a simple way of putting a table together that you can later export.
+
+
+## Use a package like `stargazer` to do that work for you
+
+A simpler but less flexible way is using a package like `stargazer`.
+\tiny
+```{r, message=FALSE}
+library(stargazer)
+stargazer(fit5, fit6, type = "text")
+```
+
+## Use a package like `stargazer` to do that work for you
+
+This particular package can take several model objects and produce a nice table. It is hard to see but it includes the number of observations, fit statistics, the coefficients, and f-statistics.
+
+Other packages exist that do similar things (e.g., `texreg`).
+
+```{r, message=FALSE, eval=FALSE}
+library(texreg)
+screenreg(list(fit5, fit6))
+```
+
+
+# Conclusions
+## Conclusion
+
+\Large
+\begin{enumerate}
+\item Performing linear models is straightforward in `R`
+\item With a few lines of code, we can fit a model and check model assumptions
+\item We can easily turn our model information into an informative table
+\end{enumerate}
+
+
+
+-----
+
+\centerline{\includegraphics[height=7in]{Figures/grass_landscape_arch.jpg}}
