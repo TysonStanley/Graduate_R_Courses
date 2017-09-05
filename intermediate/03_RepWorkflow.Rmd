@@ -91,7 +91,7 @@ Requires
 
 ---
 
-# Methods Reproducibility and rmarkdown
+# Methods Reproducibility and Rmarkdown
 
 - A replicable workflow.
 - Avoidance of input/output errors.
@@ -113,7 +113,7 @@ Requires
 
 # Benefits of rmarkdown
 
-1. Input (code) and output (tables/figures) are intimately tied---NO MANUAL TABLES!
+1. Input (code) and output (tables/figures) are intimately tied---NO MANUAL (ERROR-PRONE) TABLES!
 
 1. Document type is flexible and easy to adjust.
 
@@ -137,6 +137,24 @@ class: inverse, middle, center
 
 ---
 
+# If:
+  
+  - You are reporting findings
+  - The analyses are iterative (report and re-analyze, report and re-analyze...)
+  - Working with individuals that understand some Latex or Markdown
+
+### Use Rmarkdown for the writing and reporting!
+
+--
+
+### It'll probably stretch you a bit as a researcher -- but that is a good thing. 🤗
+---
+
+class: middle, center
+
+# Get one started!
+
+...
 
 
 ---
@@ -144,52 +162,7 @@ class: inverse, middle, center
 
 # The Ins-and-Outs of rmarkdown
 
-
 ---
-
-# YAML
-
-Is the top of the file and goes between two `---` as in:
-
-```
----
-YAML stuff
----
-```
-
---
-
-Stands for: "**Y**ou **A**re **M**y **L**izard"
-
----
-# YAML
-
-Is the top of the file and goes between two `---` as in:
-
-```
----
-YAML stuff
----
-```
-
-~~Stands for: "**Y**ou **A**re **M**y **L**izard"~~
-
-Nope, it actually stands for:
-
-### Yet Another Markup Language
-
----
-# YAML
-
-It is where you tell `rmarkdown` about the document, including
-
-1. Its type (PDF, Word, HTML, etc.)
-1. Its Title, Author, ect.
-1. Output options
-
-We will go through each aspect.
-
---
-
-### RStudio has a [great website](http://rmarkdown.rstudio.com/lesson-1.html) that we will use to understand rmarkdown better.
+class: middle, center
+# RStudio has a [great website](http://rmarkdown.rstudio.com/lesson-1.html) that we will use to understand rmarkdown better.
 

@@ -59,8 +59,8 @@ class: inverse, middle, center
 
 # Reproducibility
 
-<div id="htmlwidget-da8fdd57df032dfb5672" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-da8fdd57df032dfb5672">{"x":{"filter":"none","data":[["Methods","Results","Inferential"],["Same data and same methods","Independent data (same population) and same methods","Same or independent data and same methods"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Reproducibility<\/th>\n      <th>Definition<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-5914f9bfec47fbd7e3b0" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5914f9bfec47fbd7e3b0">{"x":{"filter":"none","data":[["Methods","Results","Inferential"],["Same data and same methods","Independent data (same population) and same methods","Same or independent data and same methods"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Reproducibility<\/th>\n      <th>Definition<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 
 --
 
@@ -92,7 +92,7 @@ Requires
 
 ---
 
-# Methods Reproducibility and rmarkdown
+# Methods Reproducibility and Rmarkdown
 
 - A replicable workflow.
 - Avoidance of input/output errors.
@@ -114,7 +114,7 @@ Requires
 
 # Benefits of rmarkdown
 
-1. Input (code) and output (tables/figures) are intimately tied---NO MANUAL TABLES!
+1. Input (code) and output (tables/figures) are intimately tied---NO MANUAL (ERROR-PRONE) TABLES!
 
 1. Document type is flexible and easy to adjust.
 
@@ -138,6 +138,24 @@ class: inverse, middle, center
 
 ---
 
+# If:
+  
+  - You are reporting findings
+  - The analyses are iterative (report and re-analyze, report and re-analyze...)
+  - Working with individuals that understand some Latex or Markdown
+
+### Use Rmarkdown for the writing and reporting!
+
+--
+
+### It'll probably stretch you a bit as a researcher -- but that is a good thing. 🤗
+---
+
+class: middle, center
+
+# Get one started!
+
+...
 
 
 ---
@@ -145,54 +163,9 @@ class: inverse, middle, center
 
 # The Ins-and-Outs of rmarkdown
 
-
 ---
-
-# YAML
-
-Is the top of the file and goes between two `---` as in:
-
-```
----
-YAML stuff
----
-```
-
---
-
-Stands for: "**Y**ou **A**re **M**y **L**izard"
-
----
-# YAML
-
-Is the top of the file and goes between two `---` as in:
-
-```
----
-YAML stuff
----
-```
-
-~~Stands for: "**Y**ou **A**re **M**y **L**izard"~~
-
-Nope, it actually stands for:
-
-### Yet Another Markup Language
-
----
-# YAML
-
-It is where you tell `rmarkdown` about the document, including
-
-1. Its type (PDF, Word, HTML, etc.)
-1. Its Title, Author, ect.
-1. Output options
-
-We will go through each aspect.
-
---
-
-### RStudio has a [great website](http://rmarkdown.rstudio.com/lesson-1.html) that we will use to understand rmarkdown better.
+class: middle, center
+# RStudio has a [great website](http://rmarkdown.rstudio.com/lesson-1.html) that we will use to understand rmarkdown better.
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
@@ -200,7 +173,8 @@ We will go through each aspect.
 "highlightLines": true,
 "countIncrementalSlides": false
 });
-if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {window.dispatchEvent(new Event('resize'));});</script>
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {window.dispatchEvent(new Event('resize'));});
+(function() {var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler"); if (!r) return; s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }"; d.head.appendChild(s);})();</script>
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
