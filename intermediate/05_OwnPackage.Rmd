@@ -1,0 +1,54 @@
+---
+title: "Creating Your Own Package"
+subtitle: "😅"
+author: "Tyson S. Barrett"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+class: inverse
+
+# Outline
+
+--
+
+## Steps of Creating a Package
+
+--
+
+## Putting that R Package on GitHub
+
+--
+
+## Update and Change It
+
+--
+
+## Install and Use It
+
+---
+background-image: url("package_creation_circle.pdf")
+background-position: 90% 60%
+background-size: 500px
+
+
+### These don't need to be done in any specific order -- it is an iterative process
+### Orange are necessary
+### Blue are optional
+
+.footnote[Karl Broman has a [nice primer](http://kbroman.org/pkg_primer/) about creating an R package.]
+
+---
+
+
+
+
