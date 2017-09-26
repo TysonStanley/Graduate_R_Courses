@@ -167,3 +167,103 @@ class: inverse, middle, center
 class: middle, center
 # RStudio has a [great website](http://rmarkdown.rstudio.com/lesson-1.html) that we will use to understand rmarkdown better.
 
+---
+# Main Pieces of RMarkdown
+
+### `YAML`
+### Code Chunks
+### Plain text
+### Inline Code
+
+---
+# YAML
+
+**You Awesome Mammal Life**
+
+Tells R:
+
+1. Title, author, date
+1. Type of document
+1. Other magic tricks
+
+.footnote[This is how you create a publishable report. We'll come back to it.]
+
+---
+# Code Chunks
+
+These are treated as R code -- nothing more, nothing less.
+
+There are several options. Some important ones:
+
+1. `echo`
+1. `message`
+1. `warning`
+1. `results`
+1. `fig.xxxx`
+1. `eval`
+
+---
+# Plain Text
+
+The text of the document. Use Markdown code here.
+
+.pull-left[
+### Equations
+
+##### Inline
+
+`$ Y = \frac{1}{2} * X$`
+
+##### Centered
+
+`$$  
+Y = \frac{1}{2} * X  
+$$`
+]
+
+.pull-right[
+### Lists
+
+`1. item one`  
+`2. item two`  
+
+`- unordered item one`  
+`- unordered item two`  
+
+### Images
+
+`![](path/to/image.png)`
+]
+
+---
+# Inline Code
+
+You can insert R code into the plain text.
+
+If we wanted to state the mean and SD of a variable, we can use:
+```{r, eval=FALSE}
+`r mean(x)` 
+`r sd(x)`
+```
+right in line with our plain text.
+
+---
+class: inverse, middle, center
+
+# Some final notes
+
+---
+background-image: url("https://www.rstudio.com/images/docs/projects_new.png")
+background-position: 50% 80%
+background-size: 600px
+
+# Easiest Way to Integrate RMarkdown --> RStudio Projects!
+
+---
+class: inverse, middle, center
+
+# More on YAML
+
+
+
+
