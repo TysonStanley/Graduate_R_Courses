@@ -51,13 +51,23 @@ class: inverse, middle, center
 
 Git is a version control system
 
-- 
+- It works with plain text files (like Rmd)
+- Looks for changes in the file and keeps track of the changes
+- Allows you to see changes over time and return to previous versions
 
 ---
 class: inverse, middle, center
 # GitHub
 
 ---
+# GitHub
+
+One of the online portals of Git.
+
+## Repositories
+
+A collection of files and folders (generally within a single project).
+
 
 
 
@@ -84,4 +94,17 @@ class: inverse, middle, center
 
 # Get a GitHub Account
 
+## [github.com](https://www.github.com)
 
+A free account let's you do most things
+
+- No private repositories though
+
+
+---
+# Final Note
+
+## OSF
+A new, free resource that incorporates GitHub, Dropbox, and other cool features
+
+### [osf.io](https://osf.io)
