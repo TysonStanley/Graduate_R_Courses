@@ -1,0 +1,39 @@
+---
+title: "Untitled"
+author: "Tyson S. Barrett"
+date: "10/2/2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
+```
+
+```{r}
+library(furniture)
+library(tidyverse)
+
+load("Data/OfficeParks.RData")
+```
+
+
+### latex output from `table1()`
+```{r, results='asis'}
+table1(df,
+       "Prod1" = prod1, "Prod2" = prod2, Gender = factor(gend),
+       splitby = ~chil,
+       output = "latex2",
+       caption = "My Latex Table") 
+```
+
+```{r, results='asis'}
+df %>%
+  mutate("Number of Children" = chil) %>%
+  table1("Prod1" = prod1, "Prod2" = prod2, Gender = factor(gend),
+         splitby = ~`Number of Children`,
+         output = "latex2",
+         caption = "My Latex Table") 
+```
+
+
+

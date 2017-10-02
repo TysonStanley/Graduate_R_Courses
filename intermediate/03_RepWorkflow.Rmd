@@ -379,6 +379,7 @@ class: inverse, middle, center
 .huge[
 [https://yihui.name/knitr/options/](https://yihui.name/knitr/options/)
 ]
+
 ---
 # YAML and Templates
 

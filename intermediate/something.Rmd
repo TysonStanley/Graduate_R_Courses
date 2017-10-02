@@ -63,6 +63,14 @@ table1(df,
        prod1, prod2)
 ```
 
+### default with splitby
+```{r}
+df %>%
+  mutate("Number of Children" = chil) %>%
+  table1(prod1, prod2,
+         splitby = ~`Number of Children`)
+```
+
 ### Markdown output from `table1()`
 ```{r}
 table1(df,
