@@ -259,15 +259,12 @@ background-size: 600px
 
 # Easiest Way to Integrate RMarkdown --> RStudio Projects!
 
+
 ---
 class: inverse, middle, center
 
-# More on YAML
-
----
-class: inverse
-
 # Pop Quiz Thing
+## on the following slide
 
 ---
 
@@ -295,6 +292,149 @@ data.frame(
     pageLength = 5
   ))
 ```
+
+---
+class: inverse, middle, center
+
+# Tables and Figures in RMarkdown
+
+---
+# Tables
+
+There are a few ways to get nice looking tables in Rmarkdown.
+
+1. Output the console output (not as nice but still informative)
+2. Output in HTML, Word, or Latex tables
+
+### Good Packages
+
+```{r, results = 'asis', echo=FALSE}
+data.frame(
+  "Package"  = c("knitr", "DT", "furniture", "stargazer", "texreg"),
+  "Function" = c("kable()", "datatable()", "table1(), tableC()", "stargazer()", "texreg()"),
+  "Output"   = c("Word, HTML, PDF", "HTML", "Word, HTML, PDF", "PDF", "PDF")
+) %>%
+  knitr::kable(format = "html", padding = 2)
+```
+
+---
+# Tables
+
+#### Text output with a few chunk options
+```{r, echo=FALSE, comment="    "}
+data.frame(
+  row.names  = c("knitr", "DT", "furniture", "stargazer", "texreg"),
+  "Function" = c("kable()", "datatable()", "table1(), tableC()", "stargazer()", "texreg()"),
+  "Output"   = c("Word, HTML, PDF", "HTML", "Word, HTML, PDF", "PDF", "PDF")
+)
+```
+
+#### HTML output from kable()
+```{r, echo=FALSE}
+data.frame(
+  "Package"  = c("knitr", "DT", "furniture", "stargazer", "texreg"),
+  "Function" = c("kable()", "datatable()", "table1(), tableC()", "stargazer()", "texreg()"),
+  "Output"   = c("Word, HTML, PDF", "HTML", "Word, HTML, PDF", "PDF", "PDF")
+) %>%
+  knitr::kable(format = "html", padding = 2)
+```
+
+---
+# Tables
+
+There are some add-ons for the packages, such as the `kableExtra` package that let's you make the kable table's look better.
+
+--
+
+### Some best practices:
+
+1. Only print what you want to print (e.g., remove any `summary(df)`'s)
+2. Only make it as pretty as is necessary (don't waste time making something look slightly better when the slightly better is not necessary)
+3. Keep the tables small (long tables are not generally very useful to an audience)
+4. If you use `kable()` or similar functions, provide a caption for the table
+5. Don't be redundant in your table. Use the space for providing unique pieces of information.
+
+
+
+---
+# Figures
+
+### Automatically including nice figures is a huge plus to using Rmarkdown
+
+There are several code chunk options for the figures: `fig.xxxx` options.
+
+### If you want more customizability:
+
+.large[Can save the figure and use it within the same knitting process.]
+
+
+---
+class: inverse, middle, center
+
+# Examples
+
+---
+# For more information about the code chunks:
+
+.huge[
+[https://yihui.name/knitr/options/](https://yihui.name/knitr/options/)
+]
+---
+# YAML and Templates
+
+Each type of document (Word, PDF, HTML) is entirely customizable
+
+### HTML
+
+If you are familiar with CSS code, then you can do a ton with the HTML document type
+
+There are also downloadable templates that you can use
+
+.footnote[All these are best packaged within an Rstudio Project!]
+
+---
+# YAML and Templates
+
+Each type of document (Word, PDF, HTML) is entirely customizable
+
+### Word Templates
+
+Each Word document has specific styles that are default
+
+You can change this and use that as the default look of your Word documents
+
+.footnote[All these are best packaged within an Rstudio Project!]
+
+---
+# YAML and Templates
+
+Each type of document (Word, PDF, HTML) is entirely customizable
+
+### PDF
+
+This is where I have the most experience (see my [dissertation proposal](http://tysonbarrett.com/assets/Manuscript/MarginalMediation_Proposal.pdf)).
+
+I'll walk you through my dissertation project, including
+
+1. The template file
+2. The YAML code to use it
+3. Other files I use
+
+.footnote[All these are best packaged within an Rstudio Project!]
+
+
+---
+class: inverse, middle, center
+
+# Questions about RMarkdown?
+
+
+
+
+
+
+
+
 
 
 

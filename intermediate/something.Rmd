@@ -1,0 +1,95 @@
+---
+title: "This Cool Thing"
+author: "Tyson S. Barrett and Someone Else"
+date: "9/19/2017"
+output:
+  html_document: default
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
+```
+
+```{r}
+library(furniture)
+library(tidyverse)
+
+load("Data/OfficeParks.RData")
+```
+
+
+
+# Plotting Examples
+
+```{r plot1, fig.align='center', fig.cap="Scatterplot with a loess curve", fig.width=7, fig.height=5}
+ggplot(df, aes(x = prod1, y = prod2)) +
+  geom_jitter() +
+  geom_smooth(color = "dodgerblue4")
+```
+
+```{r plot2, fig.align='left', fig.cap="Scatterplot with a loess curve #2", fig.width=4, fig.height=4}
+ggplot(df, aes(x = prod1, y = prod2)) +
+  geom_jitter() +
+  geom_smooth(color = "dodgerblue4")
+```
+
+#### If process, including making the figure, is computationally demanding (i.e., large dataset)
+
+#### Use: `cache = TRUE`
+
+This makes it so it won't re-run unless you've changed some of the code.
+
+
+
+
+# Table Examples
+
+### 'asis'
+```{r, results='asis'}
+table1(df,
+       prod1, prod2)
+```
+
+### 'markup'
+```{r, results='markup'}
+table1(df,
+       prod1, prod2)
+```
+
+### default
+```{r}
+table1(df,
+       prod1, prod2)
+```
+
+### Markdown output from `table1()`
+```{r}
+table1(df,
+       prod1, prod2,
+       output = "markdown")
+```
+
+### html output from `table1()`
+```{r, results='markup'}
+library(kableExtra)
+table1(df,
+       prod1, prod2,
+       splitby = ~chil,
+       output = "html",
+       type = "condense") %>%
+  add_header_above(header = c(" " = 1, "Number of Children" = 3))
+```
+
+### latex output from `table1()`
+```{r, results='markup'}
+library(kableExtra)
+table1(df,
+       "Prod1" = prod1, "Prod2" = prod2, Gender = factor(gend),
+       splitby = ~chil,
+       output = "latex2",
+       type = "condense") 
+```
+
+
+
