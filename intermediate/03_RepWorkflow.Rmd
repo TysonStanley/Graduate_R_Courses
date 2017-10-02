@@ -264,6 +264,37 @@ class: inverse, middle, center
 
 # More on YAML
 
+---
+class: inverse
+
+# Pop Quiz Thing
+
+---
+
+# Do the Following
+
+1. Open a new Rmarkdown file with a title, author, and date.
+2. Set global rmarkdown options to `echo=TRUE`, `warning=FALSE`, `message=FALSE`
+2. Output should be set to HTML.
+3. Load the following data (you can download it by pressing the CSV button).
+4. Print a summary table of the data (any summary that you'd like).
+5. Knit the document.
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+library(tidyverse)
+library(DT)
+data.frame(
+  W = runif(100),
+  X = rnorm(100),
+  Y = rbinom(n=100, prob=.5, size = 1),
+  id = 1:100
+) %>%
+  datatable(extensions = 'Buttons', options = list(
+    dom = 'Bfrtip',
+    buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+    pageLength = 5
+  ))
+```
 
 
 
