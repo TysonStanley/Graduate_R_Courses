@@ -33,7 +33,7 @@ class: inverse
 ## Install and Use It
 
 ---
-background-image: url("package_creation_circle.pdf")
+background-image: url("package_creation_circle.jpg")
 background-position: 90% 60%
 background-size: 500px
 
