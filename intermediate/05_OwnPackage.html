@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Creating Your Own Package</title>
+    <title>Creating Your Own R Package</title>
     <meta charset="utf-8">
     <meta name="author" content="Tyson S. Barrett" />
-    <link href="libs/remark-css/example.css" rel="stylesheet" />
+    <link rel="stylesheet" href="pres.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# Creating Your Own Package
-## 😅
+# Creating Your Own R Package
+## 📦
 ### Tyson S. Barrett
 
 ---
@@ -21,22 +21,18 @@ class: center, middle, inverse, title-slide
 
 class: inverse
 
-# Outline
+## What's an R package?
 
 --
-
-## Steps of Creating a Package
+## Why make one?
 
 --
+## Alright, it's pretty cool... How do I make one?
 
+--
 ## Putting that R Package on GitHub
 
 --
-
-## Update and Change It
-
---
-
 ## Install and Use It
 
 ---
@@ -52,6 +48,253 @@ background-size: 500px
 .footnote[Karl Broman has a [nice primer](http://kbroman.org/pkg_primer/) about creating an R package.]
 
 ---
+# What is an R Package?
+
+.large[
+Great question!
+
+It is a collection of:
+
+1. Functions
+2. Documentation
+3. (Optional) Data
+4. (Optional) Tests
+]
+
+--
+.large[
+We will discuss the first two in this class, but first:
+
+.coral[Why create a package?]
+]
+
+---
+# Why, oh, why?
+
+.large[
+1. Easily load your favorite functions without having to copy-and-paste it into every file
+
+2. Share it with other researchers easily
+
+3. Provide your data and code easily accessible (for transparent publication)
+
+4. Others surely exist
+]
+
+---
+class: center, middle, inverse
+
+# Alright, it's pretty cool... How do I make one?
+
+---
+# 1. Functions
+
+.large[
+This is just like the ones we created before]
+
+
+```r
+my_function &lt;- function(x){
+  ## Stuff for the function to do
+  need &lt;- to(decide, what, to, do)
+  return(need)
+}
+```
+
+.large[.coral[
+This is the hard part of creating a package -- making the function that does what you need
+]]
+
+---
+# Example Function
+
+
+```r
+michael &lt;- function(string){
+  ## takes string and splits it
+  splitted &lt;- strsplit(string, " ")[[1]]
+  
+  ## jumbles it
+  jumbled &lt;- splitted[sample(seq_along(splitted), length(splitted))]
+  jumbled
+}
+
+michael('This is a sentence that made sense')
+```
+
+```
+## [1] "sense"    "made"     "is"       "This"     "that"     "a"       
+## [7] "sentence"
+```
+
+### Not exactly useful, but it is a function that we can put in a package!
+
+---
+# Now that you have some functions you like...
+
+.large[.coral[Let's create an R package!]]
+
+
+
+```r
+library(devtools)
+setwd("Where/you/want/the/package/to_be/located/")
+
+create()               ## creates the package stucture (folders)
+create_description()   ## creates the description file
+```
+
+--
+.large[
+New folders show up and you can start saving files in the right locations
+]
+
+---
+background-image: url(file_structure.png)
+background-position: 90% 65%
+background-size: 350px
+
+# Package Structure
+
+Ones to know: 
+.large[
+1. `R` = function files
+2. `data` = data
+3. `man` = documentation
+4. `tests` = tests
+5. `vignettes` = vignettes
+6. `DESCRIPTION`
+7. `NAMESPACE`
+8. `README`
+]
+
+---
+# DESCPIPTION File
+
+    Package: furniture
+    Type: Package
+    Title: Furniture for Quantitative Scientists
+    Version: 1.7.0
+    Date: 2017-09-16
+    Authors@R: c(person("Tyson S.", "Barrett",  
+                        role=c("aut","cre"), 
+                        email = "t.barrett@aggiemail.usu.edu", 
+                        comment = c(ORCID = "0000-0002-2137-1391")),
+     	         person("Emily", "Brignone", role="aut"),
+     	         person("Daniel J.", "Laxman", role="aut"))
+    Author: Tyson Barrett [aut, cre],
+        Emily Brignone [aut],
+        Daniel Laxman [aut]
+    Maintainer: Tyson Barrett &lt;t.barrett@aggiemail.usu.edu&gt;
+    Description: Contains three main functions (i.e., three pieces of furniture):
+        table1() which produces a well-formatted table of descriptives common as Table 1
+        in research articles, tableC() which produces a well-formatted table of correlations,
+        and washer() which is helpful in cleaning up the data. In addition,
+        long() and wide(), built on the stats::reshape(), can help reformat the data.
+        These furniture functions are designed to simplify common tasks in 
+        quantitative analysis. Other data summary and cleaning tools are also available.
+
+---
+# DESCRIPTION File (continued)
+
+    Depends:
+        R (&gt;= 2.10)
+    Imports:
+        knitr
+    Suggests:
+        tidyverse,
+        rmarkdown,
+        testthat,
+        MASS,
+        sjmisc
+    LazyData: true
+    VignetteBuilder: knitr
+    Encoding: UTF-8
+    License: GPL-2
+    RoxygenNote: 6.0.1
+
+
+---
+# NAMESPACE
+
+.large[
+Automatically created for you with `devtools`
+]
+
+.large[
+Tells `R` what functions go with that package
+]
+
+
+---
+# Documentation (Thanks to `devtools`)
+
+.large[
+Before each .coral[exported function], you can provide documentation like so:
+]
+
+    #' Title
+    #'
+    #' Description of the function (e.g., what does it do? and who for?)
+    #'
+    #' @param argument1 what the argument is
+    #' @param argument2 what this argument is
+    #' 
+    #' @examples
+    #' 
+    #' 
+    #' @return whatever the function returns (e.g., a vector)
+    #'
+    #' @import packages_your_package_relies_on
+    #'
+    #' @export
+
+---
+# Create the Actual documentation
+
+
+```r
+library(devtools)
+
+setwd("Where/the/package/is/located/")
+document()
+```
+
+.large[
+The `document()` function reads the text you put above your functions and creates all the latex documentation for you
+]
+
+---
+# Share it on GitHub (Optional)
+
+.large[
+Make the package folder a repository, commit it, and sync it
+]
+
+&lt;br&gt;
+.center[.coral[.large[.large[Example]]]]
+
+&lt;br&gt;
+.large[
+You can also make changes directly on GitHub
+]
+
+---
+# Install and Load it
+
+## If you put it on GitHub:
+
+
+```r
+devtools::install_github("your_username/package_name")
+```
+
+## If it is just on your computer:
+
+
+```r
+devtools::load_all("Where/the/package/is/located/")
+```
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
