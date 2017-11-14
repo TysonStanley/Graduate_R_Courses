@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Miscellaneous Topics</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Tyson S. Barrett" />
+    <script src="libs/htmlwidgets/htmlwidgets.js"></script>
+    <script src="libs/jquery/jquery.min.js"></script>
+    <script src="libs/datatables-binding/datatables.js"></script>
+    <link href="libs/dt-core/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="libs/dt-core/css/jquery.dataTables.extra.css" rel="stylesheet" />
+    <script src="libs/dt-core/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="pres.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Miscellaneous Topics
+## 😺
+### Tyson S. Barrett
+
+---
+
+
+
+
+class: inverse
+
+# Outline
+
+--
+
+## Working with Dates
+
+--
+
+## Washing Data
+
+--
+
+## Loops, Loops, Loops, ...
+
+--
+
+## Joining Those Frames
+
+--
+
+## Modeling (assumptions, packages)
+
+
+---
+class: inverse, middle, center
+# Working with Dates
+
+---
+# Dates
+
+
+```r
+library(lubridate)
+```
+
+.pull-left[
+Extraction Functions:
+
+1. `year()`
+2. `month()`
+3. `day()`
+4. `hour()`
+5. `minute()`
+6. `second()`
+
+]
+
+.pull-right[
+Parsing (Working with Dates) Functions:
+
+1. `ymd()` and its friends
+2. `ymd_hms()`
+3. `hms()`
+
+]
+
+
+.footnote[[https://rpubs.com/davoodastaraky/lubridate](https://rpubs.com/davoodastaraky/lubridate)]
+
+
+---
+# Extraction
+
+
+```r
+right_now = now()
+right_now
+```
+
+```
+## [1] "2017-11-13 18:50:17 MST"
+```
+
+```r
+str(right_now)
+```
+
+```
+##  POSIXct[1:1], format: "2017-11-13 18:50:17"
+```
+
+.pull-left[
+
+```r
+year(right_now)
+```
+
+```
+## [1] 2017
+```
+
+```r
+month(right_now)
+```
+
+```
+## [1] 11
+```
+
+```r
+day(right_now)
+```
+
+```
+## [1] 13
+```
+]
+
+--
+
+.pull-right[
+
+```r
+hour(right_now)
+```
+
+```
+## [1] 18
+```
+
+```r
+minute(right_now)
+```
+
+```
+## [1] 50
+```
+
+```r
+second(right_now)
+```
+
+```
+## [1] 17.73281
+```
+]
+
+---
+# Parsing (Working with) Dates
+
+Sometimes we need `R` to realize some variable is a date. This is where these functions are very valuable.
+
+
+```r
+dates_but_not_dates = c("2017-12-13", "2017-12-14", "2017-12-15") 
+## what class is it?
+
+now_a_date = ymd(dates_but_not_dates)
+now_a_date
+```
+
+```
+## [1] "2017-12-13" "2017-12-14" "2017-12-15"
+```
+
+```r
+class(now_a_date)
+```
+
+```
+## [1] "Date"
+```
+
+```r
+str(now_a_date)
+```
+
+```
+##  Date[1:3], format: "2017-12-13" "2017-12-14" "2017-12-15"
+```
+
+
+---
+# Parsing (Working with) Dates
+
+Lubridate is very flexible with formatting.
+
+
+```r
+dates_but_not_dates = c("2017/12/3", "2017/12/14", "2017/12/15") ## what class is it?
+now_a_date = ymd(dates_but_not_dates)
+now_a_date
+```
+
+```
+## [1] "2017-12-03" "2017-12-14" "2017-12-15"
+```
+
+
+```r
+dates_but_not_dates = c("12031988", "12042010", "01032010")
+now_a_date = mdy(dates_but_not_dates)
+now_a_date
+```
+
+```
+## [1] "1988-12-03" "2010-12-04" "2010-01-03"
+```
+
+
+```r
+dates_but_not_dates = c(12032010, 12102010, 12202010) 
+now_a_date = mdy(dates_but_not_dates)
+now_a_date
+```
+
+```
+## [1] "2010-12-03" "2010-12-10" "2010-12-20"
+```
+
+
+---
+# Time Distance
+
+Lubridate makes this very natural.
+
+
+```r
+first = ymd("2010-12-03")
+last = today()
+last - first
+```
+
+```
+## Time difference of 2537 days
+```
+
+```r
+first = ymd_hms("2010-12-03 13:10:56 MST")
+last = now()
+last - first
+```
+
+```
+## Time difference of 2537.527 days
+```
+
+
+---
+class: inverse, middle, center
+# Washing Yo' Data
+
+---
+# Washing Yo' Data
+
+Sometimes we need to change NAs to some other value, we need to remove NaNs, or replace place-holder values (999s) with NAs.
+
+.pull-left[
+
+
+
+```r
+df = data.frame(
+  X = c(0, NA, 1, NA, 0, 1, 1, 0, 0, 0),
+  Y = c(rnorm(9), NaN),
+  Z = c(999, 1, 2, 1, 2, 1, 2, 1, 2, 1)
+)
+df
+```
+
+```
+##     X          Y   Z
+## 1   0  0.8325817 999
+## 2  NA  1.1079543   1
+## 3   1 -1.0678075   2
+## 4  NA  0.8795559   1
+## 5   0  2.4656444   2
+## 6   1  1.0186229   1
+## 7   1 -1.1372487   2
+## 8   0  0.4730306   1
+## 9   0  1.4433133   2
+## 10  0        NaN   1
+```
+]
+
+.pull-right[
+
+```r
+library(furniture)
+
+df %&gt;%
+  mutate(X = washer(X, is.na, value = 0),
+         Y = washer(Y, is.nan, value = NA),
+         Z = washer(Z, 999))
+```
+
+```
+##    X          Y  Z
+## 1  0  0.8325817 NA
+## 2  0  1.1079543  1
+## 3  1 -1.0678075  2
+## 4  0  0.8795559  1
+## 5  0  2.4656444  2
+## 6  1  1.0186229  1
+## 7  1 -1.1372487  2
+## 8  0  0.4730306  1
+## 9  0  1.4433133  2
+## 10 0         NA  1
+```
+]
+
+
+---
+class: inverse, middle, center
+# Loops, Loops, Loops, ...
+
+---
+# Looping
+
+### Why do we use loops?
+
+1. Want to repeat something over every column of a data frame
+2. Need something done repeatedly
+
+--
+
+### What are our options?
+
+1. `apply()` family of functions
+2. `for` loops
+3. manual
+
+---
+# Loops
+
+### `lapply()`
+
+- it repeats something over every column of the data frame
+- it can take built in functions and user functions
+
+--
+
+.pull-left[
+
+```r
+df = data.frame(
+  x = c(rnorm(99), NaN),
+  y = c(rnorm(99), NaN)
+)
+tail(df)
+```
+
+```
+##              x           y
+## 95   2.2147854 -0.36890323
+## 96   1.7592695  0.56757306
+## 97  -0.9172566 -0.99154239
+## 98   0.3025008 -0.08580363
+## 99   1.0148986  0.32993789
+## 100        NaN         NaN
+```
+]
+
+--
+
+.pull-right[
+
+```r
+df2 = lapply(df, washer, is.nan) %&gt;%
+  data.frame
+
+
+tail(df2)
+```
+
+```
+##              x           y
+## 95   2.2147854 -0.36890323
+## 96   1.7592695  0.56757306
+## 97  -0.9172566 -0.99154239
+## 98   0.3025008 -0.08580363
+## 99   1.0148986  0.32993789
+## 100         NA          NA
+```
+]
+
+
+---
+class: middle, center
+# Other Examples of Loops
+
+---
+class: inverse, middle, center
+
+# Joining
+
+---
+# Joining
+
+.pull-left[
+### Relational Tables
+
+.coral[Two or more connected data sets]
+
+### Keys
+
+.coral[A variable, or group of variables, that define a single observation.]
+]
+
+.pull-right[
+### Relations
+
+.coral[The way that one table's key is connected to another table]
+
+### Functions
+
+.coral[The `*_join()` functions.]
+]
+
+&lt;br&gt;
+
+&lt;br&gt;
+
+.foonote[See [R for Data Science](http://r4ds.had.co.nz/relational-data.html) book by Hadley Wickham, the chapter on relational data, for more information on this.]
+
+
+---
+class: inverse, middle, center
+# Modeling
+
+---
+# Modeling
+
+<div id="htmlwidget-aa2f07e7e68d7b18bafb" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-aa2f07e7e68d7b18bafb">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7","8","9","10"],["base","base","lavaan","lavaan","car","car","sandwich","lme4","lmerTest","geepack"],["lm","glm","cfa","sem","linearHypothesis","Anova","sandwich","lmer","lmer","geeglm"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Package<\/th>\n      <th>Function<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script>
+
+---
+# Modeling
+
+.large[
+#### Checking Assumptions
+
+Each package is going to be slightly different but the good ones should have some information about checking assumptions.
+
+#### Basic Principles
+
+1. Visualizations/tables are better than tests
+2. Check data and model
+3. Each method will have different assumptions and, thus, different techniques to assess them
+4. Often, there is a lot of gray area here
+]
+
+---
+# Modeling
+
+#### Normality, Variance (Homoskedasticity), and Leverage
+
+
+
+
+```r
+fit = lm(y ~ x + z, data = df2)
+par(mfrow = c(2,2))
+plot(fit)
+```
+
+---
+# Modeling
+
+#### Normality, Variance (Homoskedasticity), and Leverage
+
+
+
+![](06_Misc_files/figure-html/unnamed-chunk-19-1.png)&lt;!-- --&gt;
+
+---
+# Modeling
+
+#### Normality, Variance (Homoskedasticity), and Leverage
+
+or via specialized functions (e.g., in SEM).
+
+```r
+## Not a great example
+library(lavaan)
+fit = sem("y ~ x + z", data = df2)
+modificationindices(fit)
+semTools::reliability(fit)
+semTools::measurementInvariance(fit)
+```
+
+---
+# Modeling 
+
+#### Linearity
+
+Check plots.
+.pull-left[
+
+```r
+qplot(x = z, y = y, data = df2)
+```
+
+![](06_Misc_files/figure-html/unnamed-chunk-21-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+
+```r
+qplot(x = x, y = y, data = df2)
+```
+
+![](06_Misc_files/figure-html/unnamed-chunk-22-1.png)&lt;!-- --&gt;
+]
+
+---
+# Modeling
+
+.large[What modeling techniques do you use in your research?]
+
+&lt;br&gt;
+
+.large[Any specific examples you'd like to see?]
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {window.dispatchEvent(new Event('resize'));});
+(function() {var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler"); if (!r) return; s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }"; d.head.appendChild(s);})();</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+  }
+});
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

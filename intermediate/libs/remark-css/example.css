@@ -81,11 +81,3 @@ thead, tfoot, tr:nth-child(even) { background: #eee }
     left: 0 !important;
   }
 }
-
-
-.large {
-  font-size: 150%;
-}
-.huge {
-  font-size: 250%;
-}

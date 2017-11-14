@@ -1,0 +1,396 @@
+---
+title: "Miscellaneous Topics"
+subtitle: "😺"
+author: "Tyson S. Barrett"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: pres.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+class: inverse
+
+# Outline
+
+--
+
+## Working with Dates
+
+--
+
+## Washing Data
+
+--
+
+## Loops, Loops, Loops, ...
+
+--
+
+## Joining Those Frames
+
+--
+
+## Modeling (assumptions, packages)
+
+
+---
+class: inverse, middle, center
+# Working with Dates
+
+---
+# Dates
+
+```{r, warning=FALSE, message=FALSE}
+library(lubridate)
+```
+
+.pull-left[
+Extraction Functions:
+
+1. `year()`
+2. `month()`
+3. `day()`
+4. `hour()`
+5. `minute()`
+6. `second()`
+
+]
+
+.pull-right[
+Parsing (Working with Dates) Functions:
+
+1. `ymd()` and its friends
+2. `ymd_hms()`
+3. `hms()`
+
+]
+
+
+.footnote[[https://rpubs.com/davoodastaraky/lubridate](https://rpubs.com/davoodastaraky/lubridate)]
+
+
+---
+# Extraction
+
+```{r}
+right_now = now()
+right_now
+str(right_now)
+```
+
+.pull-left[
+```{r}
+year(right_now)
+month(right_now)
+day(right_now)
+```
+]
+
+--
+
+.pull-right[
+```{r}
+hour(right_now)
+minute(right_now)
+second(right_now)
+```
+]
+
+---
+# Parsing (Working with) Dates
+
+Sometimes we need `R` to realize some variable is a date. This is where these functions are very valuable.
+
+```{r}
+dates_but_not_dates = c("2017-12-13", "2017-12-14", "2017-12-15") 
+## what class is it?
+
+now_a_date = ymd(dates_but_not_dates)
+now_a_date
+class(now_a_date)
+str(now_a_date)
+```
+
+
+---
+# Parsing (Working with) Dates
+
+Lubridate is very flexible with formatting.
+
+```{r}
+dates_but_not_dates = c("2017/12/3", "2017/12/14", "2017/12/15") ## what class is it?
+now_a_date = ymd(dates_but_not_dates)
+now_a_date
+```
+
+```{r}
+dates_but_not_dates = c("12031988", "12042010", "01032010")
+now_a_date = mdy(dates_but_not_dates)
+now_a_date
+```
+
+```{r}
+dates_but_not_dates = c(12032010, 12102010, 12202010) 
+now_a_date = mdy(dates_but_not_dates)
+now_a_date
+```
+
+
+---
+# Time Distance
+
+Lubridate makes this very natural.
+
+```{r}
+first = ymd("2010-12-03")
+last = today()
+last - first
+
+first = ymd_hms("2010-12-03 13:10:56 MST")
+last = now()
+last - first
+```
+
+
+---
+class: inverse, middle, center
+# Washing Yo' Data
+
+---
+# Washing Yo' Data
+
+Sometimes we need to change NAs to some other value, we need to remove NaNs, or replace place-holder values (999s) with NAs.
+
+.pull-left[
+```{r, warning = FALSE, message = FALSE, echo=FALSE}
+library(tidyverse)
+```
+
+```{r}
+df = data.frame(
+  X = c(0, NA, 1, NA, 0, 1, 1, 0, 0, 0),
+  Y = c(rnorm(9), NaN),
+  Z = c(999, 1, 2, 1, 2, 1, 2, 1, 2, 1)
+)
+df
+```
+]
+
+.pull-right[
+```{r, message=FALSE}
+library(furniture)
+
+df %>%
+  mutate(X = washer(X, is.na, value = 0),
+         Y = washer(Y, is.nan, value = NA),
+         Z = washer(Z, 999))
+```
+]
+
+
+---
+class: inverse, middle, center
+# Loops, Loops, Loops, ...
+
+---
+# Looping
+
+### Why do we use loops?
+
+1. Want to repeat something over every column of a data frame
+2. Need something done repeatedly
+
+--
+
+### What are our options?
+
+1. `apply()` family of functions
+2. `for` loops
+3. manual
+
+---
+# Loops
+
+### `lapply()`
+
+- it repeats something over every column of the data frame
+- it can take built in functions and user functions
+
+--
+
+.pull-left[
+```{r}
+df = data.frame(
+  x = c(rnorm(99), NaN),
+  y = c(rnorm(99), NaN)
+)
+tail(df)
+```
+]
+
+--
+
+.pull-right[
+```{r}
+df2 = lapply(df, washer, is.nan) %>%
+  data.frame
+
+
+tail(df2)
+```
+]
+
+
+---
+class: middle, center
+# Other Examples of Loops
+
+---
+class: inverse, middle, center
+
+# Joining
+
+---
+# Joining
+
+.pull-left[
+### Relational Tables
+
+.coral[Two or more connected data sets]
+
+### Keys
+
+.coral[A variable, or group of variables, that define a single observation.]
+]
+
+.pull-right[
+### Relations
+
+.coral[The way that one table's key is connected to another table]
+
+### Functions
+
+.coral[The `*_join()` functions.]
+]
+
+<br>
+
+<br>
+
+.foonote[See [R for Data Science](http://r4ds.had.co.nz/relational-data.html) book by Hadley Wickham, the chapter on relational data, for more information on this.]
+
+
+---
+class: inverse, middle, center
+# Modeling
+
+---
+# Modeling
+
+```{r, echo=FALSE}
+data.frame(
+  "Package"  = c("base", "base", "lavaan", "lavaan", "car", "car",
+                 "sandwich", "lme4", "lmerTest", "geepack"),
+  "Function" = c("lm", "glm",    "cfa", "sem",       "linearHypothesis", "Anova", 
+                 "sandwich", "lmer", "lmer",     "geeglm")
+) %>%
+  DT::datatable(options = list(dom = 't'))
+```
+
+---
+# Modeling
+
+.large[
+#### Checking Assumptions
+
+Each package is going to be slightly different but the good ones should have some information about checking assumptions.
+
+#### Basic Principles
+
+1. Visualizations/tables are better than tests
+2. Check data and model
+3. Each method will have different assumptions and, thus, different techniques to assess them
+4. Often, there is a lot of gray area here
+]
+
+---
+# Modeling
+
+#### Normality, Variance (Homoskedasticity), and Leverage
+
+```{r, echo=FALSE}
+df2$z = rnorm(100)
+```
+
+```{r, eval=FALSE}
+fit = lm(y ~ x + z, data = df2)
+par(mfrow = c(2,2))
+plot(fit)
+```
+
+---
+# Modeling
+
+#### Normality, Variance (Homoskedasticity), and Leverage
+
+```{r, echo=FALSE}
+df2$z = rnorm(100)
+```
+
+```{r, echo=FALSE}
+fit = lm(y ~ x + z, data = df2)
+par(mfrow = c(2,2))
+plot(fit)
+```
+
+---
+# Modeling
+
+#### Normality, Variance (Homoskedasticity), and Leverage
+
+or via specialized functions (e.g., in SEM).
+```{r, eval=FALSE}
+## Not a great example
+library(lavaan)
+fit = sem("y ~ x + z", data = df2)
+modificationindices(fit)
+semTools::reliability(fit)
+semTools::measurementInvariance(fit)
+```
+
+---
+# Modeling 
+
+#### Linearity
+
+Check plots.
+.pull-left[
+```{r, warning=FALSE, fig.height=5}
+qplot(x = z, y = y, data = df2)
+```
+]
+
+.pull-right[
+```{r, warning=FALSE, fig.height=5}
+qplot(x = x, y = y, data = df2)
+```
+]
+
+---
+# Modeling
+
+.large[What modeling techniques do you use in your research?]
+
+<br>
+
+.large[Any specific examples you'd like to see?]
+
+
