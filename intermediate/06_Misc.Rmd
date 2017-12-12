@@ -371,7 +371,7 @@ semTools::measurementInvariance(fit)
 
 #### Linearity
 
-Check plots.
+Check scatterplots.
 .pull-left[
 ```{r, warning=FALSE, fig.height=5}
 qplot(x = z, y = y, data = df2)
@@ -383,6 +383,67 @@ qplot(x = z, y = y, data = df2)
 qplot(x = x, y = y, data = df2)
 ```
 ]
+
+---
+# Modeling Post Hoc Comparisons
+
+.large[Sometimes post hoc comparisons are important]
+
+--
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+df3 = data_frame(
+  x   = sample(1:4, replace=TRUE, size = 100),
+  grp = rbinom(100, 1, .5),
+  y   = x + grp + x * grp + rnorm(100)
+) %>%
+  mutate(x   = factor(x),
+         grp = factor(grp))
+```
+
+```{r, warning=FALSE, message=FALSE}
+fit3 = aov(y ~ x * grp, data = df3)
+summary(fit3)
+```
+
+---
+
+```{r}
+TukeyHSD(fit3)
+```
+
+
+---
+# Modeling Post Hoc Comparisons
+
+```{r, eval=FALSE}
+library(effects)
+comps = effects::Effect(c("x","grp"), fit3)
+cbind(comps$x, comps$fit, comps$lower, comps$upper) %>%
+  set_names(c("x", "grp", "est", "lower", "upper")) %>%
+  ggplot(aes(x=x, y=est, group=grp, color=grp, fill=grp)) +
+    geom_line() +
+    geom_point() +
+    geom_errorbar(aes(ymin = lower, ymax = upper),
+                  width = .3)
+```
+
+---
+# Modeling Post Hoc Comparisons
+
+```{r, echo=FALSE, message=FALSE, fig.align='center'}
+library(effects)
+comps = effects::Effect(c("x","grp"), fit3)
+cbind(comps$x, comps$fit, comps$lower, comps$upper) %>%
+  set_names(c("x", "grp", "est", "lower", "upper")) %>%
+  ggplot(aes(x=x, y=est, group=grp, color=grp, fill=grp)) +
+    geom_line() +
+    geom_point() +
+    geom_errorbar(aes(ymin = lower, ymax = upper),
+                  width = .3) +
+    anteo::theme_anteo_wh()
+```
 
 ---
 # Modeling
