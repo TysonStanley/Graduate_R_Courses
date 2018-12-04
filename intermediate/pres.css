@@ -94,6 +94,27 @@ thead, tfoot, tr:nth-child(even) { background: #eee }
   font-size: 250%;
 }
 
+.Huge { font-size: 250%;}
+.huge { font-size: 200%;}
+.large { font-size: 130% }
+.mlarge { font-size: 110% }
+.small { font-size: 70% }
+
 .coral {
-  color: #E67E22;
+  color: #D35400;
+}
+.dcoral {
+  color: #EC7063;
+}
+.nicegreen {
+  color: #239B56;
+}
+.bluer {
+  color: #1F618D;
+}
+.gray1 {
+  color: #839192;
+}
+.whiteish {
+  color: #F8F9F9;
 }

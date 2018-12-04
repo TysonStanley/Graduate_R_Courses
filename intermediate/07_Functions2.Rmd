@@ -1,0 +1,298 @@
+---
+title: "Creating Your Own Functions pt. 2"
+subtitle: "🤓"
+author: "Tyson S. Barrett"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: pres.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+
+class: center, middle, inverse
+
+# User-Defined Functions 💪
+
+---
+
+# The `function()` function 
+
+.large[
+- Creates a new function 😃
+
+- You give it the arguments the new function will use
+]
+
+--
+
+```{r, eval=FALSE}
+new_function <- function(arg1, arg2){
+  now <- do(stuff) %>%
+    with(your, arguments)
+  return(now)
+}
+```
+
+--
+
+.large[
+- Everything stops once it gets to the `return()` function
+
+- Best to catch errors early (e.g., is the argument the right type of object?)
+]
+
+---
+# Arguments can be any type of R object
+
+.pull-left[
+.nicegreen[## A Vector (numeric, character, factor)]
+
+```{r, eval=FALSE}
+## Numeric vector
+new_function <- function(x){
+  meanx <- mean(x)
+  
+  if (meanx > 0){
+    print("Whoa nelly")
+  } else {
+    print("Good effort")
+  }
+}
+```
+
+]
+
+--
+
+.pull-right[
+.coral[## A Data Frame]
+
+```{r, eval=FALSE}
+new_function <- function(df){
+  rows <- nrow(df)
+  
+  if (rows > 10){
+    print("My what big 
+          data you have")
+  } else {
+    print("Failure is 
+          the best teacher")
+  }
+}
+```
+
+]
+
+---
+# Functions can have loops in them 💪
+```{r}
+mean_range = function(df){
+  means = sapply(df, mean)
+  mins = sapply(df, min)
+  maxs = sapply(df, max)
+  final = data.frame("Mean" = means, 
+                     "Range" = maxs - mins)
+  final
+}
+```
+
+.large[
+- What does each piece do?
+]
+
+--
+.large[
+    - `sapply()`
+]
+--
+.large[
+    - `final`
+]
+--
+.large[
+- What does `mean_range()` return?
+]
+
+---
+class: middle, inverse
+
+# Let's create a function that:
+## Takes a data.frame
+## cleans the names and removes empty rows/columns
+## gives you information about the data
+## and returns the cleaned data
+
+
+---
+# Step 1. What do you want it to do? 
+
+.large[.dcoral[Write the code to do the thing you want it to do outside of the function first]]
+
+--
+
+.pull-left[
+
+#### Data to practice with
+```{r, warning = FALSE, message = FALSE}
+library(tidyverse)
+library(janitor)
+## Practice data frame
+df <- data_frame(
+  `Bad variable name` = rnorm(100),
+  good_name = runif(100)
+)
+```
+
+]
+
+--
+
+.pull-right[
+
+#### The main things we want it to do
+
+```{r, warning = FALSE, message = FALSE}
+df %>%
+  janitor::clean_names() %>%
+  janitor::remove_empty("cols") %>%
+  janitor::remove_empty("rows")
+```
+
+]
+
+---
+# Step 2. Define the function
+
+.large[Insert the working code into the body of the function]
+
+--
+
+.large[.nicegreen[Consider: What arguments do we want to have (i.e., what control do we want to give the user)?]]
+
+--
+
+```{r}
+cleaner <- function(df, print_info = TRUE){
+  df %>%
+    janitor::clean_names() %>%
+    janitor::remove_empty("cols") %>%
+    janitor::remove_empty("rows")
+}
+```
+
+--
+
+.large[We gave it an argument called `print_info` with a default of `TRUE`. Does this argument actually do anything yet?]
+
+---
+# Step 3. Add options
+
+```{r}
+cleaner <- function(df, print_info = TRUE){
+  df <- df %>%
+    janitor::clean_names() %>%
+    janitor::remove_empty("cols") %>%
+    janitor::remove_empty("rows")
+  
+  if (isTRUE(print_info)){
+    message <- paste("The data frame has", nrow(df), "rows and", ncol(df), "columns.")
+    cat(message, "\n")
+  }
+
+  return(df)
+  
+}
+```
+
+---
+# Step 4. Add error catches
+
+```{r}
+cleaner <- function(df, print_info = TRUE){
+  
+  stopifnot(is.data.frame(df))
+  stopifnot(is.logical(print_info))
+  
+  df <- df %>%
+    janitor::clean_names() %>%
+    janitor::remove_empty("cols") %>%
+    janitor::remove_empty("rows")
+  
+  if (isTRUE(print_info)){
+    message <- paste("The data frame has", nrow(df), "rows and", ncol(df), "columns.")
+    cat(message, "\n")
+  }
+
+  return(df)
+  
+}
+```
+
+---
+# Step 5. Test it (try to break it)
+
+```{r}
+cleaner(df)
+```
+
+---
+# Step 5. Test it (try to break it)
+
+```{r}
+cleaner(df, print_info = FALSE)
+```
+
+---
+# Step 5. Test it (try to break it)
+
+```{r, eval = FALSE}
+cleaner(df, print_info = "yes")
+```
+
+```{r, echo = FALSE, message = TRUE}
+tried <- try(cleaner(df, print_info = "yes"))
+cat(tried)
+```
+
+--
+
+```{r, eval = FALSE}
+cleaner(df$good_name)
+```
+
+```{r, echo = FALSE, message = TRUE}
+tried2 <- try(cleaner(df$good_name))
+cat(tried2)
+```
+
+--
+
+```{r, eval = FALSE}
+cleaner(df, james = 1)
+```
+
+```{r, echo = FALSE, message = TRUE}
+tried3 <- try(cleaner(df, james = 1))
+cat(tried3)
+```
+
+
+---
+class: middle, inverse
+
+# Some Good Resources to learn more about FUNCTIONS
+
+### Hadley Wickham's [R for Data Science Book](https://r4ds.had.co.nz/functions.html)
+
+### Hadley Wickham's [Advanced R Book](https://adv-r.hadley.nz/functions.html) (more advanced)
+
+
+

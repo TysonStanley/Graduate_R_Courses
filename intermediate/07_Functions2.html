@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Creating Your Own Functions pt. 2</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Tyson S. Barrett" />
+    <link rel="stylesheet" href="pres.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Creating Your Own Functions pt. 2
+## 🤓
+### Tyson S. Barrett
+
+---
+
+
+
+
+
+class: center, middle, inverse
+
+# User-Defined Functions 💪
+
+---
+
+# The `function()` function 
+
+.large[
+- Creates a new function 😃
+
+- You give it the arguments the new function will use
+]
+
+--
+
+
+```r
+new_function &lt;- function(arg1, arg2){
+  now &lt;- do(stuff) %&gt;%
+    with(your, arguments)
+  return(now)
+}
+```
+
+--
+
+.large[
+- Everything stops once it gets to the `return()` function
+
+- Best to catch errors early (e.g., is the argument the right type of object?)
+]
+
+---
+# Arguments can be any type of R object
+
+.pull-left[
+.nicegreen[## A Vector (numeric, character, factor)]
+
+
+```r
+## Numeric vector
+new_function &lt;- function(x){
+  meanx &lt;- mean(x)
+  
+  if (meanx &gt; 0){
+    print("Whoa nelly")
+  } else {
+    print("Good effort")
+  }
+}
+```
+
+]
+
+--
+
+.pull-right[
+.coral[## A Data Frame]
+
+
+```r
+new_function &lt;- function(df){
+  rows &lt;- nrow(df)
+  
+  if (rows &gt; 10){
+    print("My what big 
+          data you have")
+  } else {
+    print("Failure is 
+          the best teacher")
+  }
+}
+```
+
+]
+
+---
+# Functions can have loops in them 💪
+
+```r
+mean_range = function(df){
+  means = sapply(df, mean)
+  mins = sapply(df, min)
+  maxs = sapply(df, max)
+  final = data.frame("Mean" = means, 
+                     "Range" = maxs - mins)
+  final
+}
+```
+
+.large[
+- What does each piece do?
+]
+
+--
+.large[
+    - `sapply()`
+]
+--
+.large[
+    - `final`
+]
+--
+.large[
+- What does `mean_range()` return?
+]
+
+---
+class: middle, inverse
+
+# Let's create a function that:
+## Takes a data.frame
+## cleans the names and removes empty rows/columns
+## gives you information about the data
+## and returns the cleaned data
+
+
+---
+# Step 1. What do you want it to do? 
+
+.large[.dcoral[Write the code to do the thing you want it to do outside of the function first]]
+
+--
+
+.pull-left[
+
+#### Data to practice with
+
+```r
+library(tidyverse)
+library(janitor)
+## Practice data frame
+df &lt;- data_frame(
+  `Bad variable name` = rnorm(100),
+  good_name = runif(100)
+)
+```
+
+]
+
+--
+
+.pull-right[
+
+#### The main things we want it to do
+
+
+```r
+df %&gt;%
+  janitor::clean_names() %&gt;%
+  janitor::remove_empty("cols") %&gt;%
+  janitor::remove_empty("rows")
+```
+
+```
+## # A tibble: 100 x 2
+##    bad_variable_name good_name
+##                &lt;dbl&gt;     &lt;dbl&gt;
+##  1           -0.445     0.306 
+##  2           -1.00      0.212 
+##  3           -0.0216    0.412 
+##  4            1.44      0.450 
+##  5            1.26      0.0994
+##  6            0.742     0.452 
+##  7           -0.968     0.931 
+##  8           -1.57      0.114 
+##  9            0.898     0.925 
+## 10           -0.298     0.713 
+## # … with 90 more rows
+```
+
+]
+
+---
+# Step 2. Define the function
+
+.large[Insert the working code into the body of the function]
+
+--
+
+.large[.nicegreen[Consider: What arguments do we want to have (i.e., what control do we want to give the user)?]]
+
+--
+
+
+```r
+cleaner &lt;- function(df, print_info = TRUE){
+  df %&gt;%
+    janitor::clean_names() %&gt;%
+    janitor::remove_empty("cols") %&gt;%
+    janitor::remove_empty("rows")
+}
+```
+
+--
+
+.large[We gave it an argument called `print_info` with a default of `TRUE`. Does this argument actually do anything yet?]
+
+---
+# Step 3. Add options
+
+
+```r
+cleaner &lt;- function(df, print_info = TRUE){
+  df &lt;- df %&gt;%
+    janitor::clean_names() %&gt;%
+    janitor::remove_empty("cols") %&gt;%
+    janitor::remove_empty("rows")
+  
+  if (isTRUE(print_info)){
+    message &lt;- paste("The data frame has", nrow(df), "rows and", ncol(df), "columns.")
+    cat(message, "\n")
+  }
+
+  return(df)
+  
+}
+```
+
+---
+# Step 4. Add error catches
+
+
+```r
+cleaner &lt;- function(df, print_info = TRUE){
+  
+  stopifnot(is.data.frame(df))
+  stopifnot(is.logical(print_info))
+  
+  df &lt;- df %&gt;%
+    janitor::clean_names() %&gt;%
+    janitor::remove_empty("cols") %&gt;%
+    janitor::remove_empty("rows")
+  
+  if (isTRUE(print_info)){
+    message &lt;- paste("The data frame has", nrow(df), "rows and", ncol(df), "columns.")
+    cat(message, "\n")
+  }
+
+  return(df)
+  
+}
+```
+
+---
+# Step 5. Test it (try to break it)
+
+
+```r
+cleaner(df)
+```
+
+```
+## The data frame has 100 rows and 2 columns.
+```
+
+```
+## # A tibble: 100 x 2
+##    bad_variable_name good_name
+##                &lt;dbl&gt;     &lt;dbl&gt;
+##  1           -0.445     0.306 
+##  2           -1.00      0.212 
+##  3           -0.0216    0.412 
+##  4            1.44      0.450 
+##  5            1.26      0.0994
+##  6            0.742     0.452 
+##  7           -0.968     0.931 
+##  8           -1.57      0.114 
+##  9            0.898     0.925 
+## 10           -0.298     0.713 
+## # … with 90 more rows
+```
+
+---
+# Step 5. Test it (try to break it)
+
+
+```r
+cleaner(df, print_info = FALSE)
+```
+
+```
+## # A tibble: 100 x 2
+##    bad_variable_name good_name
+##                &lt;dbl&gt;     &lt;dbl&gt;
+##  1           -0.445     0.306 
+##  2           -1.00      0.212 
+##  3           -0.0216    0.412 
+##  4            1.44      0.450 
+##  5            1.26      0.0994
+##  6            0.742     0.452 
+##  7           -0.968     0.931 
+##  8           -1.57      0.114 
+##  9            0.898     0.925 
+## 10           -0.298     0.713 
+## # … with 90 more rows
+```
+
+---
+# Step 5. Test it (try to break it)
+
+
+```r
+cleaner(df, print_info = "yes")
+```
+
+
+```
+## Error in cleaner(df, print_info = "yes") : 
+##   is.logical(print_info) is not TRUE
+```
+
+--
+
+
+```r
+cleaner(df$good_name)
+```
+
+
+```
+## Error in cleaner(df$good_name) : is.data.frame(df) is not TRUE
+```
+
+--
+
+
+```r
+cleaner(df, james = 1)
+```
+
+
+```
+## Error in cleaner(df, james = 1) : unused argument (james = 1)
+```
+
+
+---
+class: middle, inverse
+
+# Some Good Resources to learn more about FUNCTIONS
+
+### Hadley Wickham's [R for Data Science Book](https://r4ds.had.co.nz/functions.html)
+
+### Hadley Wickham's [Advanced R Book](https://adv-r.hadley.nz/functions.html) (more advanced)
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
